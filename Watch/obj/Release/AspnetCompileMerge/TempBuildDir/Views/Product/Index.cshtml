@@ -1,0 +1,382 @@
+﻿@using Watch.Models.EF;
+@{
+    var product = ViewBag.product as Product;
+    ViewBag.Title = product.Product_Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var lstSameBrand = ViewBag.lstSameBrand as List<Product>;
+    var lstSameCategory = ViewBag.lstSameCategory as List<Product>;
+    var lstReview = ViewBag.lstReview as List<Review>;
+    var lstImage = ViewBag.lstImage as List<Image>;
+    var lstBrand = ViewBag.lstBrand as List<Brand>;
+    var lstCategory = ViewBag.lstCategory as List<Category>;
+    int tab_up = 1, tab_dow = 1;
+    var user = Session["user"] as User;
+}
+
+<section class="main-content-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <!-- BSTORE-BREADCRUMB START -->
+                <div class="bstore-breadcrumb">
+                    <a href="/">Trang chủ<span><i class="fa fa-caret-right fa-fw"></i> </span> </a>
+                    <a href="/danh-muc/@product.Category.Metatitle.Trim()-@product.Category_ID">@product.Category.Name <span><i class="fa fa-caret-right fa-fw"></i> </span> </a>
+                    <span> @product.Product_Name </span>
+                </div>
+                <!-- BSTORE-BREADCRUMB END -->
+            </div>
+        </div>
+        <div class="row">   
+            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
+                <!-- SINGLE-PRODUCT-DESCRIPTION START -->
+                <div class="row">
+                    <div class="col-lg-5 col-md-5 col-sm-4 col-xs-12">
+                        <div class="single-product-view">
+                            <!-- Tab panes -->
+
+                            <div class="tab-content">
+                                @foreach (var item in lstImage)
+                                {
+                                    if (tab_up == 1)
+                                    {
+                                        <div class="tab-pane active" id="Images_@item.ID">
+                                            <div class="single-product-image">
+                                                <img src="~/Assets/Client/img/product-detail/@item.Image1" alt="single-product-image" />
+                                                @*<a class="new-mark-box" href="#">new</a>*@
+                                                <a class="fancybox" href="~/Assets/Client/img/product-detail/@item.Image1" data-fancybox-group="gallery"><span class="btn 
+                                                                                                                                                               ">Phóng to <i class="fa fa-search-plus"></i></span></a>
+                                            </div>
+                                        </div>
+                                        tab_up++;
+                                    }
+                                    else
+                                    {
+                                        <div class="tab-pane" id="Images_@item.ID">
+                                            <div class="single-product-image">
+                                                <img src="~/Assets/Client/img/product-detail/@item.Image1" alt="single-product-image" />
+                                                @*<a class="new-mark-box" href="#">new</a>*@
+                                                <a class="fancybox" href="~/Assets/Client/img/product-detail/@item.Image1" data-fancybox-group="gallery"><span class="btn large-btn">Phóng to <i class="fa fa-search-plus"></i></span></a>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <div class="select-product">
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs select-product-tab bxslider">
+                                @foreach (var item in lstImage)
+                                {
+                                    if (tab_dow == 1)
+                                    {
+                                        <li class="active">
+                                            <a href="#Images_@item.ID" data-toggle="tab"><img src="~/Assets/Client/img/product-detail/@item.Image1" alt="pro-thumbnail" /></a>
+                                        </li>
+                                        tab_dow++;
+                                    }
+                                    else
+                                    {
+                                        <li>
+                                            <a href="#Images_@item.ID" data-toggle="tab"><img src="~/Assets/Client/img/product-detail/@item.Image1" alt="pro-thumbnail" /></a>
+                                        </li>
+                                    }
+                                }
+
+
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-7 col-md-7 col-sm-8 col-xs-12">
+                        <div class="single-product-descirption">
+                            <h2>@product.Product_Name</h2>
+
+                            <div class="single-product-condition">
+                                <p>Danh mục: <span>@product.Category.Name</span></p>
+                                <p>Thương hiệu: <span>@product.Brand.Name</span></p>
+                            </div>
+                            <div class="single-product-price">
+                                @if (product.Price != null)
+                                {
+                                    <h2 class="price">@product.Price.Value.ToString("N0") đ</h2>
+                                    <h4 class="old-price">@product.Promotion_Price.Value.ToString("N0") đ</h4>
+                                }
+                                else
+                                {
+                                    <h2 class="price">@product.Promotion_Price.Value.ToString("N0") đ</h2>
+                                }
+                            </div>
+
+                            <div class="single-product-add-cart">
+                                <a class="add-cart-text btn-addCart" data-id="@product.ID" title="Thêm giỏ hàng" href="javascript:void(0)">Thêm vào giỏ hàng</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- SINGLE-PRODUCT-DESCRIPTION END -->
+                <!-- SINGLE-PRODUCT INFO TAB START -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="product-more-info-tab">
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs more-info-tab">
+                                <li class="active"><a href="#moreinfo" data-toggle="tab">Thông tin sản phẩm</a></li>
+                                <li><a href="#datasheet" data-toggle="tab">Thông số kỹ thuật</a></li>
+                                <li><a href="#review" data-toggle="tab">Đánh giá sản phẩm</a></li>
+                            </ul>
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="moreinfo" style="max-height: 800px; overflow: auto">
+                                    @Html.Raw(product.Desription)
+                                </div>
+                                <div class="tab-pane" id="datasheet">
+                                      @Html.Raw(product.Configuration)
+                                </div>
+                                <div class="tab-pane" id="review">
+                                    <div class="row tab-review-row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 padding-5">
+                                            <div class="wishlists-area">
+                                                <form class="new-wishlists-box primari-box" id="savewishlist" method="get">
+                                                    @if (user != null)
+                                                    {
+                                                        <h3 class="box-subheading">Đánh giá của bạn về sản phẩm</h3>
+                                                        <div class="primary-box-content">
+                                                            <div class="form-group wishlists-form-group primary-form-group type-of-text">
+                                                                <label for="wishlist">Nội dung</label>
+                                                                <textarea class="contact-text" name="ContactMessage" id="text_review"></textarea>
+                                                            </div>
+                                                            <div class="submit-button">
+                                                                <a href="javacript:void(0)" id="btn-review" data-userid="@user.ID" class="btn main-btn">Gửi đánh giá <i class="fa fa-chevron-right"></i></a>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <h3 class="box-subheading">Bạn vui lòng đăng nhập để đánh giá sản phẩm</h3>
+                                                        <div class="primary-box-content">
+                                                            <div class="submit-button">
+                                                                <a href="/user/login" class="btn main-btn">Đăng nhập</a>
+                                                            </div>
+                                                        </div>
+                                                    }
+
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <!-- <a href="#" class="write-review-btn">Write your review!</a> -->
+
+                                        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-9 padding-5">
+                                            <div class="single-about-info">
+                                                @if (lstReview.Count > 0)
+                                                {
+                                                    <h3>Đánh giá sản phẩm</h3>
+                                                    foreach (var item in lstReview.Take(6))
+                                                    {
+                                            <div class="our-testimonials">
+                                                <!-- SINGLE-TESTIMONIALS START -->
+                                                <div class="single-testimonials">
+                                                    <div class="testimonials-text">
+                                                        <span class="before"></span>
+                                                        @item.Content
+                                                        <span class="after"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="tab-rating-box">
+                                                    <div class="review-author-info">
+                                                        <strong>@item.User.Fullname</strong>
+                                                        <span>@item.CreatedDate.Value.ToString("dd-MM-yyyy hh:mm tt")</span>
+                                                    </div>
+                                                </div>
+                                                <!-- SINGLE-TESTIMONIALS END -->
+                                                @{
+                                                    if (item.Feedback != null)
+                                                    {
+                                                        <!-- SINGLE-TESTIMONIALS START -->
+                                                        <div class="single-testimonials">
+                                                            <div class="testimonials-text-admin text-right">
+                                                                <span class="before"></span>
+                                                                <span style="color: red;">@item.Feedback</span>
+                                                                <span class="after"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="tab-rating-box">
+                                                            <div class="review-author-info text-right">
+                                                                <b style="color:red;">Admin</b>
+                                                                <span>@item.FeedbackDate.Value.ToString("dd-MM-yyyy hh:mm tt")</span>
+                                                            </div>
+                                                        </div>
+                                                        <!-- SINGLE-TESTIMONIALS END -->
+                                                    }
+                                                }
+                                            </div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <h3>Sản phẩm chưa có đánh giá.</h3>
+                                                }
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- SINGLE-PRODUCT INFO TAB END -->
+                <!-- RELATED-PRODUCTS-AREA START -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="left-title-area">
+                            <h3 style="margin-bottom: 10px;">Một số sản phẩm cùng thương hiệu</h3>
+                        </div>
+                    </div>
+                    <div class="related-product-area featured-products-area">
+                        <div class="col-sm-12">
+                            <div class=" row">
+                                <!-- RELATED-CAROUSEL START -->
+                                <div class="related-product">
+                                    @foreach (var item in lstSameBrand)
+                                    {
+                                        var url = "/san-pham/" + item.Metatitle.Trim() + "-" + item.ID;
+                                        <div class="item">
+                                            <div class="new-product">
+                                                <div class="single-product-item">
+                                                    <div class="product-image">
+                                                        <a href="@url"><img src="~/Assets/Client/img/product/@item.Image" alt="product-image" /></a>
+                                                        @if (item.Price != null)
+                                                        {
+                                                            var discount = (1 - item.Price / item.Promotion_Price) * 100;
+                                                            <a href="#" class="new-mark-box">-@Math.Round((double)discount, 0)</a>
+                                                        }
+
+                                                    </div>
+                                                    <div class="product-info">
+                                                        <a href="@url">@item.Product_Name</a>
+                                                        <div class="price-box">
+                                                            @if (item.Price != null)
+                                                            {
+                                                                <span class="price">@item.Price.Value.ToString("N0") đ</span>
+                                                                <span class="old-price">@item.Promotion_Price.Value.ToString("N0") đ</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="price">@item.Price.Value.ToString("N0") đ</span>
+                                                            }
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                                <!-- RELATED-CAROUSEL END -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- RELATED-PRODUCTS-AREA END -->
+            </div>
+            <!-- RIGHT SIDE BAR START -->
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <!-- SINGLE SIDE BAR START -->
+                <div class="single-product-right-sidebar">
+                    <h3>Một số sản phẩm cùng danh mục</span>
+                    <ul>
+                        @foreach (var item in lstSameCategory)
+                        {
+                            var url = "/san-pham/" + item.Metatitle.Trim() + "-" + item.ID;
+                            <li>
+                                <a href="@url"><img src="~/Assets/Client/img/product/@item.Image" alt="" /></a>
+                                <div class="r-sidebar-pro-content">
+                                    <h5><a href="@url">@item.Product_Name</a></h5>
+                                </div>
+                            </li>
+                        }
+
+                    </ul>
+                </div>
+                <!-- SINGLE SIDE BAR END -->
+                <!-- SINGLE SIDE BAR START -->
+                <div class="single-product-right-sidebar clearfix">
+                    <h2 class="left-title">Tags </h2>
+                    <div class="category-tag">
+                        @foreach (var item in lstCategory)
+                        {
+                            var link = "/danh-muc/" + item.Metatitle.Trim() + "-" + item.ID;
+                            <a href="@link">@item.Name</a>
+                        }
+                        @foreach (var item in lstBrand)
+                        {
+                            var link = "/thuong-hieu/" + item.Metatitle.Trim() + "-" + item.ID;
+                            <a href="@link">@item.Name</a>
+                        }
+
+                    </div>
+                </div>
+
+            </div>
+            <!-- SINGLE SIDE BAR END -->
+        </div>
+    </div>
+</section>
+
+@section jsSection{
+    @*<script src="~/Assets/Client/js/rating.js"></script>*@
+<script>
+
+        $(document).ready(function () {
+            //$('.rating').on('change', function (e, stars, index) {
+            //    var rate = parseInt($(".js-wc-rating-value").text());
+            //    $('#point_review').val(rate);
+            //});
+            //$('.rating').starRating();
+
+            $("#btn-review").click(function () {
+            var user_id = $(this).data('userid');
+            var product_id = @product.ID;
+            var content = $('#text_review').val();
+            //var rating = $('#point_review').val();
+
+                var json_review = [];
+                json_review.push({
+                    Content: content,
+                    //Rating: rating,
+                    User_ID: user_id,
+                    Product_ID: product_id
+                });
+
+                 if (content == '') {
+                    alert('Bạn vui lòng nhập nội dung đánh giá.');
+                    return;
+                }
+
+                $.ajax({
+                    url: '/Product/addReview',
+                    data: { json_review: JSON.stringify(json_review) },
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.status == true) {
+                            PNotify.success({
+                                title: 'THÔNG BÁO!!',
+                                text: 'Đánh giá sản phẩm thành công.'
+                            });
+                            setTimeout(function(){ window.location.href = "/san-pham/@product.Metatitle.Trim()-" + product_id; }, 1000);
+                        } else {
+                                PNotify.error({
+                                title: 'THÔNG BÁO!!',
+                                text: 'Cần mua sản phẩm này trước khi đánh giá'
+                            });
+                        }
+
+
+                    }
+                });
+            });
+});
+
+</script>
+}

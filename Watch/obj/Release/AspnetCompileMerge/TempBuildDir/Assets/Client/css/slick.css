@@ -1,0 +1,22 @@
+﻿.slider
+{
+    position: relative;
+}
+.slick-icon{
+    position: absolute;
+    z-index: 1;
+    color: white;
+    font-size: 30px;
+    top: 50%;
+    font-weight: lighter;
+}
+
+.icon-left {
+    left: 10px;
+}
+.icon-right {
+    right: 10px;
+}
+.slick-list{
+    width: 100%;
+}

@@ -1,0 +1,134 @@
+﻿@model IEnumerable<Watch.Models.EF.Review>
+
+@{
+    ViewBag.Title = "review";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            Danh sách các bài đánh giá
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-solid fa-comment"></i>đánh giá sản phẩm </a></li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            @if (TempData["message"] != null)
+            {
+                <div class="alert @TempData["alert"] text-center" id="AlertBox">
+                    @TempData["message"]
+                </div>
+            }
+        </div>
+        <!-- Modal -->
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title"></h3>
+                    </div><!-- /.box-header -->
+                    <div class="box-body">
+                        <table id="tblData" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">ID</th>
+                                    <th class="text-center">Họ Tên khách hàng</th>
+                                    <th class="text-center">Nội dung đánh giá</th>
+                                    <th class="text-center">Sản phẩm đánh giá</th>
+                                    <th class="text-center">Ngày đánh giá</th>
+                                    <th class="text-center">Nội dung phản hồi</th>
+                                    <th class="text-center">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td class="text-center">@item.ID</td>
+                                        <td class="text-center">@item.User.Fullname</td>
+                                        <td class="text-center">@item.Content</td>
+                                        <td class="text-center">@item.Product.Product_Name</td>
+                                        <td class="text-center">@item.CreatedDate</td>
+                                        <td class="text-center">@item.Feedback</td>
+                                        <td class="text-center">
+                                            <button class="btn btn-success btnEdit" data-id="@item.ID">Phản hồi</button>
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </section><!-- /.content -->
+</div>
+<!-- Modal -->
+<div class="modal fade edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center text-uppercase" id="exampleModalLabel">Phản hồi đánh giá sản phẩm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("HandleFeedback", "product", FormMethod.Post))
+                {
+                    <input type="hidden" name="ID" id="ID" />
+                    <div class="form-group col-sm-12">
+                        <label for="Feedback" class="col-form-label">Nội dung phản hồi:</label>
+                        <input type="text" name="Feedback" id="Feedback" class="form-control" required>
+                    </div>
+
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-primary">Gửi</button>
+                    </div>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section jsSection{
+
+    <script>
+        $(function () {
+            //nếu không có thao tác gì thì ẩn đi
+            $('#AlertBox').removeClass('hide');
+
+            //Sau khi hiển thị lên thì delay 1s và cuộn lên trên sử dụng slideup
+            $('#AlertBox').delay(2000).slideUp(500);
+
+            $('.btnEdit').click(function (event) {
+                $('.edit').modal('show');
+                //alert($(this).data('id'));
+                var ID = $(this).data('id');
+                $.ajax({
+                    url: "/Admin/Product/GetByID/" + ID,
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (res) {
+                        $('#Feedback').val(res.Feedback);
+                        $('#ID').val(res.ID);
+                    }
+                });
+            });
+        });
+
+    </script>
+}

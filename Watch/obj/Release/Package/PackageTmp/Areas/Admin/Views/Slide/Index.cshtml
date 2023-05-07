@@ -1,0 +1,197 @@
+﻿@model IEnumerable<Watch.Models.EF.slide>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            Danh sách slide
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-table"></i>Quản lý chung</a></li>
+            <li class="active">Danh sách slide</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            @if (TempData["message"] != null)
+            {
+                <div class="alert @TempData["alert"] text-center" id="AlertBox">
+                    @TempData["message"]
+                </div>
+            }
+        </div>
+        <div class="row">
+            <div class="col-md-4" style="margin-bottom: 10px">
+                <button class="btn btn-lg btn-primary" data-toggle="modal" data-target="#add">Thêm mới </button>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Thêm mới slide</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @using (Html.BeginForm("add", "slide", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">Ảnh slide:</label>
+                                <label for="imgInp" class="custom-file-upload">
+                                    <i class="fa fa-cloud-upload"></i>
+                                </label>
+                                <input name="Image" type="file" id="imgInp" accept="image/*"> <br>
+                                <img id="blah" src="~/Assets/Client/img/empty.jpg" alt="your image" width="100" />
+                            </div>
+                            <div class="form-group text-center">
+                                <button type="submit" class="btn btn-primary btn-lg">Thêm mới</button>
+                            </div>
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title"></h3>
+                    </div><!-- /.box-header -->
+                    <div class="box-body">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">ID</th>
+                                    <th class="text-center" colspan="2">Ảnh slide</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+
+                                    <tr>
+                                        <td class="text-center">@item.id</td>
+                                        <td class="text-center"><img src="~/Assets/Client/img/slider/@item.img" width="500" /></td>
+                                        <td class="text-center">
+                                            <button class="btn btn-danger btnDelete" data-id="@item.id" title="Xóa slide"><i class="fa fa-remove"></i></button>
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </section><!-- /.content -->
+</div>
+
+@section jsSection{
+
+    <script>
+
+        imgInp.onchange = evt => {
+            const [file] = imgInp.files
+            if (file) {
+                blah.src = URL.createObjectURL(file)
+            }
+        }
+        $(function () {
+            $('#imgInp').change(function () {
+                var i = $(this).prev('label').clone();
+                var file = '<i class="fa fa-cloud-upload"></i>' + $('#imgInp')[0].files[0].name;
+                $(this).prev('label').empty();
+                $(this).prev('label').append(file);
+            });
+
+           
+
+            //nếu không có thao tác gì thì ẩn đi
+            $('#AlertBox').removeClass('hide');
+
+            //Sau khi hiển thị lên thì delay 1s và cuộn lên trên sử dụng slideup
+            $('#AlertBox').delay(2000).slideUp(500);
+
+
+            $('.btnDelete').off('click').on('click', function () {
+
+                const notice = PNotify.notice({
+                    title: 'Thông báo',
+                    text: 'Bạn thật sự muốn xóa?',
+                    icon: 'fa fa-question-circle',
+                    width: '360px',
+                    minHeight: '110px',
+                    hide: false,
+                    closer: false,
+                    sticker: false,
+                    destroy: true,
+                    stack: new PNotify.Stack({
+                        dir1: 'down',
+                        modal: true,
+                        firstpos1: 25,
+                        overlayClose: false
+                    }),
+                    modules: new Map([
+                        ...PNotify.defaultModules,
+                        [PNotifyConfirm, {
+                            confirm: true
+                        }]
+                    ])
+                });
+
+                notice.on('pnotify:confirm', () =>
+                    $.ajax({
+                        data: { ID: $(this).data('id') },
+                        url: '/Admin/slide/Delete',
+                        dataType: 'Json',
+                        type: 'POST',
+                        success: function (res) {
+                            if (res.status == true) {
+                                PNotify.success({
+                                    title: 'THÔNG BÁO!!',
+                                    text: 'Xóa slide thành công.'
+                                });
+                                setTimeout(function () {
+                                    window.location.href = "/admin/slide";
+                                }, 1000);
+
+                            } else {
+                                PNotify.error({
+                                    title: 'THÔNG BÁO!!',
+                                    text: 'Xóa slide KHÔNG thành công.'
+                                });
+                            }
+                        }
+                    })
+
+                );
+                //notice.on('pnotify:cancel', () => alert('Oh ok. Chicken, I see.'));
+
+            });
+
+            $("#tblData").DataTable();
+        });
+
+    </script>
+
+}
+
+
+
+

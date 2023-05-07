@@ -1,0 +1,179 @@
+﻿@using Watch.Models.DTO;
+@{
+    ViewBag.Title = "Giỏ hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var totalmoney = 0;
+    int qty = 0;
+    bool check = true;
+}
+@model List<CartDTO>
+<section class="main-content-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <!-- BSTORE-BREADCRUMB START -->
+                <div class="bstore-breadcrumb">
+                    <a href="/">Trang chủ</a>
+                    <span><i class="fa fa-caret-right fa-fw"></i></span>
+                    <span>Giỏ hàng</span>
+                </div>
+                <!-- BSTORE-BREADCRUMB END -->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <!-- SHOPPING-CART SUMMARY START -->
+                <h2 class="page-title">Giỏ hàng của tôi </h2>
+                <!-- SHOPPING-CART SUMMARY END -->
+            </div>
+
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                @if (Model.Count == 0)
+                {
+                    <div class="empty">
+                        <img src="~/Assets/Client/img/emptycart.png" alt="" class="empty__img">
+                        <p class="empty__note">Không có sản phẩm nào trong giỏ hàng của bạn.</p>
+                        <a href="/" class="empty__btn">Tiếp tục mua sắm</a>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <!-- TABLE START -->
+                        <table class="table table-bordered" id="cart-summary">
+                            <!-- TABLE HEADER START -->
+                            <thead>
+                                <tr>
+                                    <th class="cart-product text-center" colspan="2">Sản phẩm</th>
+                                    <th class="cart-unit text-center">Đơn giá (đ)</th>
+                                    <th class="cart_quantity text-center">Số lượng</th>
+                                    <th class="cart-total text-center">Thành tiền (đ)</th>
+                                    <th class="cart-delete">&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <!-- TABLE HEADER END -->
+                            <!-- TABLE BODY START -->
+                            <tbody>
+                                <!-- SINGLE CART_ITEM START -->
+                                @foreach (var item in Model)
+                                {
+                                    var sum = 0;
+                                    var url = "/san-pham/" + item.Product.Metatitle.Trim() + "-" + item.Product.ID;
+                                    var link = "/thuong-hieu/" + item.Product.Brand.Metatitle.Trim() + "-" + item.Product.Brand_ID;
+                                    qty += item.Quantity;
+                                    <tr>
+                                        <td class="cart-product">
+                                            <a href="@url"><img alt="Blouse" src="~/Assets/Client/img/product/@item.Product.Image"></a>
+                                        </td>
+                                        <td class="cart-description">
+                                            <p class="product-name"><a href="@url">@item.Product.Product_Name</a></p>
+                                            <small><a href="@link">Thương hiệu : @item.Product.Brand.Name</a></small>
+                                            @if (item.actual_number == 0)
+                                            {
+                                                <small style="color: red">Sản phẩm đã hết hàng</small>
+                                                check = false;
+                                            }
+                                            else
+                                            {
+                                                <small style="color: blue">Còn <span id="numberOfProduct_@item.Product.ID"> @item.actual_number </span> sản phẩm</small>
+                                            }
+                                        </td>
+                                        <td class="cart-unit">
+                                            <ul class="price text-right">
+                                                @if (item.Product.Price == null)
+                                                {
+                                                    <li class="price">@item.Product.Promotion_Price.Value.ToString("N0")</li>
+                                                    sum += (int)item.Product.Promotion_Price * item.Quantity;
+                                                    totalmoney += sum;
+                                                }
+                                                else
+                                                {
+                                                    var discount = (1 - item.Product.Price / item.Product.Promotion_Price) * 100;
+                                                    <li class="price special-price">@item.Product.Price.Value.ToString("N0")</li>
+                                                    <li class="price-percent-reduction small">&nbsp;-@Math.Round((double)discount, 0)%&nbsp;</li>
+                                                    <li class="old-price">@item.Product.Promotion_Price.Value.ToString("N0")</li>
+                                                    sum += (int)item.Product.Price * item.Quantity;
+                                                    totalmoney += sum;
+                                                }
+                                            </ul>
+
+                                        </td>
+                                        <td class="cart_quantity text-center">
+                                            <div class="cart-plus-minus-button">
+                                                <input class="cart-plus-minus" type="text" name="qtybutton" value="@item.Quantity" max="@item.actual_number" id="quantity_@item.Product.ID" readonly>
+                                                <div class="dec qtybutton cart_quantity_down" data-id="@item.Product.ID">-</div>
+                                                <div class="inc qtybutton cart_quantity_up" data-id="@item.Product.ID">+</div>
+                                            </div>
+                                        </td>
+                                        <td class="cart-total">
+                                            <span class="price" style="font-size: 18px">@sum.ToString("N0")</span>
+                                        </td>
+                                        <td class="cart-delete text-center">
+                                            <span>
+                                                <a href="javascript:void(0)" class="cart_quantity_delete" data-id="@item.Product.ID" title="Xóa sản phẩm"><i class="fa fa-trash-o"></i></a>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                            <!-- TABLE BODY END -->
+                            <!-- TABLE FOOTER START -->
+                            <tfoot>
+                                <tr class="cart-total-price">
+                                    <td class="cart_voucher" colspan="2"></td>
+                                    <td class="total-price-container text-right" colspan="2">
+                                        <span>Tổng số lượng: </span>
+                                    </td>
+                                    <td id="total-price-container" class="price">
+                                        <span id="total-price">@qty</span>
+                                    </td>
+                                </tr>
+                                <tr class="cart-total-price">
+                                    <td class="cart_voucher" colspan="2"></td>
+                                    <td class="total-price-container text-right" colspan="2">
+                                        <span>Phí vận chuyển: </span>
+                                    </td>
+                                    <td id="total-price-container" class="price">
+                                        <span id="total-price">0 đ</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cart_voucher" colspan="2"></td>
+                                    <td class="total-price-container text-right" colspan="2">
+                                        <span>Tổng tiền: </span>
+                                    </td>
+                                    <td id="total-price-container" class="price">
+                                        <span id="total-price">@totalmoney.ToString("N0") đ</span>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                            <!-- TABLE FOOTER END -->
+                        </table>
+                        <!-- TABLE END -->
+                    </div>
+                    <!-- RETURNE-CONTINUE-SHOP START -->
+                    <div class="returne-continue-shop">
+                        <a href="/" class="continueshoping"><i class="fa fa-chevron-left"></i>Tiếp tục mua sắm</a>
+                        @if (check)
+                        {
+                            <a href="/cart/payment" class="procedtocheckout">Đặt hàng ngay<i class="fa fa-chevron-right"></i></a>
+                        }
+                        else
+                        {
+                            <p style="color: red">Giỏ hàng của bạn có sản phẩm đã hết hàng</p>
+                        }
+                    </div>
+                    <!-- RETURNE-CONTINUE-SHOP END -->
+                }
+
+                <!-- CART TABLE_BLOCK END -->
+            </div>
+            
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                
+            </div>
+        </div>
+    </div>
+</section>
+

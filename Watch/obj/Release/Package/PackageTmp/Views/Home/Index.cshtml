@@ -1,0 +1,191 @@
+﻿@using Watch.Models.EF;
+@{
+    ViewBag.Title = "Trang chủ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var lstSlide = ViewBag.lstSlide as List<slide>;
+    var lstBrand = ViewBag.lstBrand as List<Brand>;
+    var lstCategory = ViewBag.lstCategory as List<Category>;
+    var lstProduct = ViewBag.lstProduct as List<Product>;
+    var NewProduct = ViewBag.NewProduct as List<Product>;
+    var lstFeatureProduct = ViewBag.lstFeatureProduct as List<Product>;
+    int tab_pro = 1, tab_cate = 1;
+}
+<section class="main-content-section">
+    <div class="slider">
+        @foreach (var item in lstSlide)
+        {
+            <div class="slider_item">
+                <img style="width: 100%" src="~/Assets/Client/img/slider/@item.img" />
+            </div>
+        }
+    </div>
+    <div class="container">
+
+        <!-- TOW-COLUMN-PRODUCT START -->
+        <div class="row tow-column-product">
+            @foreach (var jtem in lstBrand)
+            {
+
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <!-- NEW-PRODUCT-AREA START -->
+                    <div class="new-product-area">
+                        <div class="left-title-area">
+                            <h2 class="left-title">@jtem.Name</h2>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="row">
+                                    <!-- NEW-PRO-CAROUSEL START -->
+                                    <div class="new-pro-carousel">
+                                        @foreach (var item in lstProduct.Where(x => x.Brand_ID == jtem.ID))
+                                        {
+                                            var url = "/san-pham/" + item.Metatitle.Trim() + "-" + item.ID;
+                                            <div class="item">
+                                                <div class="new-product">
+                                                    <div class="single-product-item">
+                                                        <div class="product-image">
+                                                            <a href="@url"><img src="~/Assets/Client/img/product/@item.Image" alt="product-image" /></a>
+                                                            @if (item.Price != null)
+                                                            {
+                                                                var discount = (1 - item.Price / item.Promotion_Price) * 100;
+                                                                <a class="new-mark-box">-@Math.Round((double)discount, 0) %</a>
+                                                            }
+
+                                                        </div>
+                                                        <div class="product-info">
+                                                            <a href="@url">@item.Product_Name</a>
+                                                            <div class="price-box">
+                                                                @if (item.Price != null)
+                                                                {
+                                                                    <span class="price">@item.Price.Value.ToString("N0") đ</span>
+                                                                    <span class="old-price">@item.Promotion_Price.Value.ToString("N0") đ</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="price">@item.Price.Value.ToString("N0") đ</span>
+                                                                }
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+
+
+                                    </div>
+                                    <!-- NEW-PRO-CAROUSEL END -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- NEW-PRODUCT-AREA END -->
+                </div>
+            }
+
+        </div>
+
+        <div class="row">
+            <!-- FEATURED-PRODUCTS-AREA START -->
+            <div class="featured-products-area">
+                <div class="center-title-area">
+                    <h2 class="center-title">Sản phẩm mới</h2>
+                </div>
+                <div class="col-xs-12">
+                    <div class="row">
+                        <!-- FEARTURED-CAROUSEL START -->
+                        <div class="feartured-carousel">
+                            @foreach (var item in NewProduct)
+                            {
+                                var url = "/san-pham/" + item.Metatitle.Trim() + "-" + item.ID;
+                                <div class="item">
+                                    <div class="new-product">
+                                        <div class="single-product-item">
+                                            <div class="product-image">
+                                                <a href="@url"><img src="~/Assets/Client/img/product/@item.Image" alt="product-image" /></a>
+                                                @if (item.Price != null)
+                                                {
+                                                    var discount = (1 - item.Price / item.Promotion_Price) * 100;
+                                                    <a class="new-mark-box">-@Math.Round((double)discount, 0) %</a>
+                                                }
+
+                                            </div>
+                                            <div class="product-info">
+                                                <a href="@url">@item.Product_Name</a>
+                                                <div class="price-box">
+                                                    @if (item.Price != null)
+                                                    {
+                                                        <span class="price">@item.Price.Value.ToString("N0") đ</span>
+                                                        <span class="old-price">@item.Promotion_Price.Value.ToString("N0") đ</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="price">@item.Price.Value.ToString("N0") đ</span>
+                                                    }
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <!-- FEARTURED-CAROUSEL END -->
+                    </div>
+                </div>
+            </div>
+            <!-- FEATURED-PRODUCTS-AREA END -->
+        </div>
+
+    </div>
+</section>
+
+<section class="main-content-section">
+    <div class="container">
+        <div class="row">
+            <div class="bestseller-products-area">
+                <div class="center-title-area">
+                    <h2 class="center-title">Sản phẩm nổi bật</h2>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="all-gategory-product">
+                    <div class="row">
+                        <ul class="gategory-product">
+                            @foreach (var item in lstFeatureProduct.Take(16))
+                            {
+                                var url = "/san-pham/" + item.Metatitle.Trim() + "-" + item.ID;
+                                <li class="gategory-product-list col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                                    <div class="single-product-item">
+                                        <div class="product-image">
+                                            <a href="@url"><img src="~/Assets/Client/img/product/@item.Image" alt="product-image" /></a>
+                                            @if (item.Price != null)
+                                            {
+                                                var discount = (1 - item.Price / item.Promotion_Price) * 100;
+                                                <a class="new-mark-box">-@Math.Round((double)discount, 0) %</a>
+                                            }
+                                        </div>
+                                        <div class="product-info">
+                                            <a href="@url">@item.Product_Name</a>
+                                            <div class="price-box">
+                                                @if (item.Price != null)
+                                                {
+                                                    <span class="price">@item.Price.Value.ToString("N0") đ</span>
+                                                    <span class="old-price">@item.Promotion_Price.Value.ToString("N0") đ</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="price">@item.Price.Value.ToString("N0") đ</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

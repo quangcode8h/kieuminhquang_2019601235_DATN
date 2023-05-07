@@ -1,0 +1,209 @@
+﻿@using Watch.Models.EF;
+@{
+    ViewBag.Title = "order";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var listProductInOrder = ViewBag.listProductInOrder as List<Watch.Models.Business.ProductInOrder>;
+}
+@model PagedList.IPagedList<Watch.Models.EF.Order>
+@using PagedList.Mvc;
+<section class="main-content-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <!-- BSTORE-BREADCRUMB START -->
+                <div class="bstore-breadcrumb">
+                    <a href="/">Trang chủ</a>
+                    <span><i class="fa fa-caret-right fa-fw"></i></span>
+                    <span>ĐƠN HÀNG</span>
+                </div>
+                <!-- BSTORE-BREADCRUMB END -->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <!-- SHOPPING-CART SUMMARY START -->
+                <h2 class="page-title">Danh sách đơn hàng</h2>
+                <!-- SHOPPING-CART SUMMARY END -->
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                @foreach (var item in Model)
+                {
+                    <h2 class="page-title">ID đơn hàng: @item.ID</h2>
+                    int totalAmount = 0;
+                    double totalMoney = 0;
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="cart-summary">
+                            <thead>
+                                <tr>
+                                    <th class="cart-product text-center" colspan="2">Sản phẩm</th>
+                                    <th class="cart-unit text-center">Đơn giá (đ)</th>
+                                    <th class="cart_quantity text-center">Số lượng</th>
+                                    <th class="cart-total text-center">Thành tiền (đ)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var p in listProductInOrder)
+                                {
+                                    if (p.OrderID == item.ID)
+                                    {
+                                        totalAmount += p.amount;
+                                        totalMoney += p.amount * p.Price;
+                                        <tr>
+                                            <td class="cart-product">
+                                                <a href="#"><img alt="Blouse" src="~/Assets/Client/img/product/@p.Image"></a>
+                                            </td>
+                                            <td class="cart-description">
+                                                <p class="product-name"><a href="#">@p.ProductName</a></p>
+                                            </td>
+                                            <td class="cart-unit">
+                                                <p>@p.Price</p>
+                                            </td>
+                                            <td class="cart-unit">
+                                                <p>@p.amount</p>
+                                            </td>
+                                            <td class="cart-unit">
+                                                @{
+                                                    double cost = p.Price * p.amount;
+                                                }
+                                                <p>@cost</p>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr class="cart-total-price">
+                                    <td class="total-price-container text-right" colspan="3">
+                                        <span>Tổng số lượng: </span>
+                                    </td>
+                                    <td id="total-price-container" class="price" colspan="2">
+                                        <span id="total-price">@totalAmount</span>
+                                    </td>
+                                </tr>
+                                <tr class="cart-total-price">
+                                    <td class="total-price-container text-right" colspan="3">
+                                        <span>Phí vận chuyển: </span>
+                                    </td>
+                                    <td id="total-price-container" class="price" colspan="2">
+                                        <span id="total-price">0 đ</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="total-price-container text-right" colspan="3">
+                                        <span>Tổng tiền: </span>
+                                    </td>
+                                    <td id="total-price-container" class="price" colspan="2">
+                                        <span id="total-price">@totalMoney đ</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="total-price-container text-right" colspan="3">
+                                        <span>Ngày đặt: </span>
+                                    </td>
+                                    <td id="total-price-container" class="price" colspan="2">
+                                        <span id="total-price">@item.CreatedDate.Value.ToString("dd-MM-yyyy")</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="total-price-container text-right" colspan="3"><span>Trạng thái:</span></td>
+                                    @{
+                                        if (item.Status == 1)
+                                        {
+                                            <td id="total-price-container" class="price" colspan="1"><button class="btn btn-primary">Đặt hàng</button></td>
+                                            <td id="total-price-container" class="price btnDelete" data-id="@item.ID" colspan="1"><button class="btn btn-default">Click để hủy đơn</button></td>
+                                        }
+                                        else if (item.Status == 2)
+                                        {
+                                            <td id="total-price-container" class="price" colspan="2"><button class="btn btn-warning">Đang vận chuyển</button></td>
+                                        }
+                                        else if (item.Status == 3 || item.Payment == 1)
+                                        {
+                                            <td id="total-price-container" class="price" colspan="2"><button class="btn btn-success">Đã thanh toán</button></td>
+                                        }
+                                        else if (item.Status == -1)
+                                        {
+                                            <td id="total-price-container" class="price" colspan="2"><button class="btn btn-danger">Bị từ chối</button></td>
+                                        }
+                                        else if (item.Status == 0)
+                                        {
+                                            <td id="total-price-container" class="price" colspan="2"><button class="btn btn-danger">Đơn đã hủy</button></td>
+                                        }
+                                    }
+
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                }
+            </div>
+
+
+        </div>
+        <!-- Thêm mã phân trang -->
+        <br />
+        Trang @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) / @Model.PageCount
+
+        @Html.PagedListPager(Model, page => Url.Action("order",
+            new { page, ID = ViewBag.ID }))
+        <!-- Kết thúc -->
+    </div>
+
+</section>
+@section jsSection{
+    <script>
+        $('.btnDelete').off('click').on('click', function () {
+            const notice = PNotify.notice({
+                title: 'Thông báo',
+                text: 'Bạn thật sự muốn hủy đơn hàng này?',
+                icon: 'fa fa-question-circle',
+                width: '360px',
+                minHeight: '110px',
+                hide: false,
+                closer: false,
+                sticker: false,
+                destroy: true,
+                stack: new PNotify.Stack({
+                    dir1: 'down',
+                    modal: true,
+                    firstpos1: 25,
+                    overlayClose: false
+                }),
+                modules: new Map([
+                    ...PNotify.defaultModules,
+                    [PNotifyConfirm, {
+                        confirm: true
+                    }]
+                ])
+            });
+
+            notice.on('pnotify:confirm', () =>
+                $.ajax({
+                    data: { ID: $(this).data('id') },
+                    url: '/user/CancelOrder',
+                    dataType: 'Json',
+                    type: 'POST',
+                    success: function (res) {
+                        if (res.status == true) {
+                            PNotify.success({
+                                title: 'THÔNG BÁO!!',
+                                text: 'Hủy đơn hàng thành công.'
+                            });
+                            setTimeout(function () { window.location.href = "/user/order/@ViewBag.ID"; }, 2000);
+                        } else {
+                            PNotify.error({
+                                title: 'THÔNG BÁO!!',
+                                text: 'Hủy đơn KHÔNG thành công.'
+                            });
+                        }
+                    }
+                })
+
+            );
+
+
+        });
+    </script>
+}
+
+
+

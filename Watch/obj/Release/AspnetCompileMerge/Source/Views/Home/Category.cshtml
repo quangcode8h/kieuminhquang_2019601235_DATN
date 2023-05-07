@@ -1,0 +1,9 @@
+﻿@{
+    var lstCategory = ViewBag.lstCategory as List<Watch.Models.EF.Category>;
+}
+
+@foreach (var item in lstCategory)
+{
+    var url = "/danh-muc/" + item.Metatitle.Trim() + "-" + item.ID;
+    <li><a href="@url"><i class="fa fa-angle-double-right fa-fw"></i>@item.Name </a></li>
+}

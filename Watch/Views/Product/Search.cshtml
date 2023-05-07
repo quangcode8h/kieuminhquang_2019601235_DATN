@@ -1,0 +1,193 @@
+﻿@using Watch.Models.EF;
+@using Watch.Models.DTO;
+@model PagedList.IPagedList<Product>
+@{
+    ViewBag.Title = "Tìm kiếm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var lstCategory = ViewBag.lstCategory as List<Category>;
+    var lstBrand = ViewBag.lstBrand as List<Brand>;
+    var keyword = ViewBag.keyword;
+    var link = "/tim-kiem?keyword=" + keyword;
+}
+
+<section class="main-content-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <!-- BSTORE-BREADCRUMB START -->
+                <div class="bstore-breadcrumb">
+                    <a href="/">Trang chủ</a>
+                    <span><i class="fa fa-caret-right fa-fw"></i></span>
+                    <span>Tìm kiếm: @keyword</span>
+                </div>
+                <!-- BSTORE-BREADCRUMB END -->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <!-- PRODUCT-LEFT-SIDEBAR START -->
+                <div class="product-left-sidebar">
+
+                    <div class="product-single-sidebar">
+                        <span class="sidebar-title">Danh mục</span>
+                        <ul>
+                            @foreach (var item in lstCategory)
+                            {
+                                var url = "/danh-muc/" + item.Metatitle.Trim() + "-" + item.ID;
+                                <li>
+                                    <label class="cheker">
+                                        <input type="checkbox" name="categories" />
+                                        <span></span>
+                                    </label>
+                                    <a href="@url">@item.Name<span> (@item.Products.Count())</span></a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                    <!-- SINGLE SIDEBAR CATEGORIES END -->
+                    <!-- SINGLE SIDEBAR AVAILABILITY START -->
+                    <div class="product-single-sidebar">
+                        <span class="sidebar-title">Thương hiệu</span>
+                        <ul>
+                            @foreach (var item in lstBrand)
+                            {
+                                var url = "/thuong-hieu/" + item.Metatitle.Trim() + "-" + item.ID;
+                                <li>
+                                    <label class="cheker">
+                                        <input type="checkbox" name="categories" />
+                                        <span></span>
+                                    </label>
+                                    <a href="@url">@item.Name<span> (@item.Products.Count())</span></a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+
+                    
+
+                </div>
+
+            </div>
+            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
+                <div class="right-all-product">
+
+                    <div class="product-category-title">
+                        <h1>
+                            <span class="cat-name">Tìm kiếm: @keyword</span>
+                            <span class="count-product">Có @ViewBag.ProductCount sản phẩm.</span>
+                        </h1>
+                    </div>
+                    @*<div class="product-shooting-area">
+                        <div class="product-shooting-bar">
+                             SHOORT-BY START 
+                            <div class="shoort-by">
+                                <label for="productShort">Sắp xếp theo:</label>
+                                <div class="short-select-option">
+                                    <select name="sortby" id="productShort">
+                                        <option value="@link">--</option>
+                                        <option value="@link?type=price&order=desc" @(ViewBag.Type == "price" && ViewBag.Order == "desc" ? "selected" : "")>Giá - Từ cao xuống thấp</option>
+                                        <option value="@link?type=price&order=esc" @(ViewBag.Type == "price" && ViewBag.Order == "esc" ? "selected" : "")>Giá - Từ thấp đến cao</option>
+                                        <option value="@link?type=name&order=a-to-z" @(ViewBag.Type == "name" && ViewBag.Order == "a-to-z" ? "selected" : "")>Tên - Từ A đến Z</option>
+                                        <option value="@link?type=name&order=z-to-a" @(ViewBag.Type == "name" && ViewBag.Order == "z-to-a" ? "selected" : "")>Tên - Từ Z đến A</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>*@
+                </div>
+                <!-- ALL GATEGORY-PRODUCT START -->
+                <div class="all-gategory-product">
+                    <div class="row">
+                        <ul class="gategory-product">
+                            @foreach (var item in Model)
+                            {
+                                var url = "/san-pham/" + item.Metatitle.Trim() + "-" + item.ID;
+                                <li class="gategory-product-list col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                                    <div class="single-product-item">
+                                        <div class="product-image">
+                                            <a href="@url"><img src="~/Assets/Client/img/product/@item.Image" alt="product-image" /></a>
+                                            @if (item.Price != null)
+                                            {
+                                                var discount = (1 - item.Price / item.Promotion_Price) * 100;
+                                                <a class="new-mark-box">-@Math.Round((double)discount, 0) %</a>
+                                            }
+                                        </div>
+                                        <div class="product-info">
+                                            <a href="@url">@item.Product_Name</a>
+                                            <div class="price-box">
+                                                @if (item.Price != null)
+                                                {
+                                                    <span class="price">@item.Price.Value.ToString("N0") đ</span>
+                                                    <span class="old-price">@item.Promotion_Price.Value.ToString("N0") đ</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="price">@item.Price.Value.ToString("N0") đ</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+
+                        </ul>
+                    </div>
+                </div>
+                <!-- ALL GATEGORY-PRODUCT END -->
+                <!-- PRODUCT-SHOOTING-RESULT START -->
+                <div class="product-shooting-result product-shooting-result-border">
+                    <div class="showing-next-prev">
+                        <ul class="pagination-bar">
+                            @if (Model.PageNumber > 1)
+                            {
+                                <li>
+                                    <a href="@(Url.Action("Search", new { keyword = keyword, type = ViewBag.Type, order = ViewBag.Order, page = Model.PageNumber - 1 }))">
+                                        <i class="fa fa-chevron-left"></i> Trước
+                                    </a>
+                                </li>
+                            }
+
+                            @for (int i = 1; i <= Model.PageCount; i++)
+                            {
+                                <li class="@(Model.PageNumber == i ? "active" : "")">
+                                    <span>
+                                        <a class="pagi-num" href="@(Url.Action("Search", new { keyword = keyword, type = ViewBag.Type, order = ViewBag.Order, page = i }))">@i</a>
+                                    </span>
+                                </li>
+                            }
+
+                            @if (Model.PageNumber < Model.PageCount)
+                            {
+                                <li>
+                                    <a href="@(Url.Action("Search", new { keyword = keyword, type = ViewBag.Type, order = ViewBag.Order, page = Model.PageNumber + 1 }))">
+                                        Sau <i class="fa fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            }
+
+                        </ul>
+                    </div>
+                </div>
+                <!-- PRODUCT-SHOOTING-RESULT END -->
+            </div>
+        </div>
+    </div>
+</section>
+
+@section jsSection{
+    <script>
+        var url = window.location;
+        $(function () {
+
+            $('#productShort').change(function () {
+                window.location.href = url.origin + this.value;
+            });
+
+        });
+
+
+    </script>
+}

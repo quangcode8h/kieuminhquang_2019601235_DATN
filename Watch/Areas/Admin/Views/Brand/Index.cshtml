@@ -1,0 +1,276 @@
+﻿
+@{
+    ViewBag.Title = "Quản lý thương hiệu";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@using Watch.Models.EF;
+
+@model List<Brand>
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            Danh sách thương hiệu
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-table"></i>Quản lý chung</a></li>
+            <li class="active">Danh sách thương hiệu</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            @if (TempData["message"] != null)
+            {
+                <div class="alert @TempData["alert"] text-center" id="AlertBox">
+                    @TempData["message"]
+                </div>
+            }
+        </div>
+        <div class="row">
+            <div class="col-md-4" style="margin-bottom: 10px">
+                <button class="btn btn-lg btn-primary" data-toggle="modal" data-target="#add">Thêm mới </button>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Thêm mới thương hiệu</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @using (Html.BeginForm("add", "Brand", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">Tên thương hiệu:</label>
+                                <input type="text" name="Name" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">Hình ảnh:</label>
+                                <label for="imgInp" class="custom-file-upload">
+                                    <i class="fa fa-cloud-upload"></i>
+                                </label>
+                                <input name="Image" type="file" id="imgInp" accept="image/*"> <br>
+                                <img id="blah" src="~/Assets/Client/img/empty.jpg" alt="your image" width="100" />
+                            </div>
+                            <div class="form-group text-center">
+                                <button type="submit" class="btn btn-primary btn-lg">Thêm mới</button>
+                            </div>
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title"></h3>
+                    </div><!-- /.box-header -->
+                    <div class="box-body">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">ID</th>
+                                    <th class="text-center" colspan="2">Thương hiệu</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+
+                                    <tr>
+                                        <td class="text-center">@item.ID</td>
+                                        <td><img src="~/Assets/Client/img/brand/@item.Image" width="100" /></td>
+                                        <td class="text-center">@item.Name</td>
+                                        <td>
+                                            <button class="btn btn-default btnEdit" data-id="@item.ID" title="Cập nhật thương hiệu"><i class="fa fa-edit"></i></button>
+                                            <button class="btn btn-danger btnDelete" data-id="@item.ID" title="Xóa thương hiệu"><i class="fa fa-remove"></i></button>
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </section><!-- /.content -->
+</div>
+<!-- Modal -->
+<div class="modal fade edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center text-uppercase" id="exampleModalLabel">Cập nhật thương hiệu</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("edit", "Brand", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    <input type="hidden" name="ID" id="ID" />
+                    <div class="form-group col-sm-12">
+                        <label for="recipient-name" class="col-form-label">Tên thương hiệu:</label>
+                        <input type="text" name="Name" id="Name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Hình ảnh:</label>
+                        <label for="imgInp_Edit" class="custom-file-upload">
+                            <i class="fa fa-cloud-upload"></i>
+                        </label>
+                        <input name="Image" type="file" id="imgInp_Edit" accept="image/*" style="display:none;"><br />
+                        <img id="blah_Edit" src="" alt="your image" width="100px" />
+                    </div>
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-primary">Cập nhật</button>
+                    </div>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section jsSection{
+
+    <script>
+
+        imgInp.onchange = evt => {
+            const [file] = imgInp.files
+            if (file) {
+                blah.src = URL.createObjectURL(file)
+            }
+        }
+        imgInp_Edit.onchange = evt => {
+            const [file] = imgInp_Edit.files
+            if (file) {
+                blah_Edit.src = URL.createObjectURL(file)
+            }
+        }
+        $(function () {
+            $('#imgInp').change(function () {
+                var i = $(this).prev('label').clone();
+                var file = '<i class="fa fa-cloud-upload"></i>' + $('#imgInp')[0].files[0].name;
+                $(this).prev('label').empty();
+                $(this).prev('label').append(file);
+            });
+
+            $('#imgInp_Edit').change(function () {
+                var i = $(this).prev('label').clone();
+                var file = '<i class="fa fa-cloud-upload"></i>' + $('#imgInp_Edit')[0].files[0].name;
+                $(this).prev('label').empty();
+                $(this).prev('label').append(file);
+            });
+
+            
+            //nếu không có thao tác gì thì ẩn đi
+            $('#AlertBox').removeClass('hide');
+
+            //Sau khi hiển thị lên thì delay 1s và cuộn lên trên sử dụng slideup
+            $('#AlertBox').delay(2000).slideUp(500);
+
+
+            $('.btnDelete').off('click').on('click', function () {
+
+                const notice = PNotify.notice({
+                    title: 'Thông báo',
+                    text: 'Bạn thật sự muốn xóa?',
+                    icon: 'fa fa-question-circle',
+                    width: '360px',
+                    minHeight: '110px',
+                    hide: false,
+                    closer: false,
+                    sticker: false,
+                    destroy: true,
+                    stack: new PNotify.Stack({
+                        dir1: 'down',
+                        modal: true,
+                        firstpos1: 25,
+                        overlayClose: false
+                    }),
+                    modules: new Map([
+                        ...PNotify.defaultModules,
+                        [PNotifyConfirm, {
+                            confirm: true
+                        }]
+                    ])
+                });
+
+                notice.on('pnotify:confirm', () =>
+                    $.ajax({
+                        data: { ID: $(this).data('id') },
+                        url: '/Admin/Brand/Delete',
+                        dataType: 'Json',
+                        type: 'POST',
+                        success: function (res) {
+                            if (res.status == true) {
+                                PNotify.success({
+                                    title: 'THÔNG BÁO!!',
+                                    text: 'Xóa thương hiệu thành công.'
+                                });
+                                setTimeout(function () {
+                                    window.location.href = "/admin/brand";
+                                }, 1000);
+
+                            } else {
+                                PNotify.error({
+                                    title: 'THÔNG BÁO!!',
+                                    text: 'Xóa thương hiệu KHÔNG thành công.'
+                                });
+                            }
+                        }
+                    })
+
+                );
+                //notice.on('pnotify:cancel', () => alert('Oh ok. Chicken, I see.'));
+
+            });
+
+            $('.btnEdit').click(function (event) {
+                $('.edit').modal('show');
+                //alert($(this).data('id'));
+                var ID = $(this).data('id');
+                $.ajax({
+                    url: "/Admin/Brand/GetByID/" + ID,
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (res) {
+                        $('#Name').val(res.Name);
+                        $('#ID').val(res.ID);
+
+                        var file = '<i class="fa fa-cloud-upload"></i>' + res.Image;
+                        $('#imgInp_Edit').prev('label').empty();
+                        $('#imgInp_Edit').prev('label').append(file);
+                        if (res.Image != null)
+                            blah_Edit.src = "/Assets/Client/img/brand/" + res.Image.trim();
+                    }
+                });
+            });
+
+            $("#tblData").DataTable();
+        });
+
+    </script>
+
+}
+
+

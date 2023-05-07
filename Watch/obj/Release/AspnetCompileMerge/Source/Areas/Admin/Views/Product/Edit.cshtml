@@ -1,0 +1,184 @@
+﻿
+
+@using Watch.Models.EF;
+@{
+    ViewBag.Title = "Cập nhật sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    var lstCategory = ViewBag.lstCategory as List<Category>;
+    var lstBrand = ViewBag.lstBrand as List<Brand>;
+    var product = ViewBag.product as Product;
+}
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            Cập nhật sản phẩm
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-paragraph"></i>Quản lý sản phẩm</a></li>
+            <li><a href="/admin/product">Danh sách sản phẩm</a></li>
+            <li class="active">Cập nhật sản phẩm</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Cập nhật thông tin sản phẩm
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                @using (Html.BeginForm("frmEdit", "Product", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmValidate" }))
+                                {
+                                    <input type="hidden" name="ID" value="@product.ID" />
+                                    <div class="form-group col-md-6">
+                                        <label>Tên sản phẩm</label>
+                                        <input type="text" class="form-control" name="Product_Name" value="@product.Product_Name"  placeholder="Nhập tên sản phẩm">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label>Thuộc thương hiệu</label>
+                                        <select class="form-control" name="Brand_ID">
+                                            <option value="">---Chọn thương hiệu---</option>
+                                            @foreach (var item in lstBrand)
+                                            {
+                                                <option value="@item.ID" @(item.ID == product.Brand_ID ? "selected" : "")>@item.Name</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label>Thuộc danh mục</label>
+                                        <select class="form-control" name="Category_ID">
+                                            <option value="">---Chọn danh mục---</option>
+                                            @foreach (var item in lstCategory)
+                                            {
+                                                <option value="@item.ID" @(item.ID == product.Category_ID ? "selected" : "")>@item.Name</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>Giá gốc</label>
+                                        <input type="number" name="Promotion_Price"  value="@product.Price" class="form-control">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>Giá khuyến mại</label>
+                                        <input type="number" name="Price"  value="@product.Promotion_Price" class="form-control">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>Số lượng</label>
+                                        <input type="number" name="Quantity"  value="@product.Quantity" class="form-control">
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label>Hình ảnh sản phẩm</label>
+                                        <label for="imgInp" class="custom-file-upload">
+                                            <i class="fa fa-cloud-upload"></i>
+                                        </label>
+                                        <input name="Image" type="file" id="imgInp" accept="image/*"> <br>
+                                        <img id="blah" src="~/Assets/Client/img/product/@product.Image" alt="your image" width="100px" />
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Mô tả sản phẩm</label>
+                                            <textarea name="Desription" id="Desription" class="form-control" rows="3" placeholder="Nhập mô tả sản phẩm, tối thiểu 200 ký tự">
+                                                @product.Desription
+                                            </textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Thông số kỹ thuật</label>
+                                            <textarea name="Configuration" id="Configuration" class="form-control" rows="3" placeholder="Nhập mô tả sản phẩm, tối thiểu 200 ký tự">
+                                                @product.Configuration
+                                            </textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 text-center">
+                                        <button type="submit" class="btn btn-lg btn-default">Cập nhật</button>
+                                    </div>
+                                }
+
+                            </div>
+
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+        </div>
+
+
+    </section><!-- /.content -->
+</div>
+
+@section jsSection{
+
+    <script>
+        imgInp.onchange = evt => {
+            const [file] = imgInp.files
+            if (file) {
+                blah.src = URL.createObjectURL(file)
+            }
+        }
+        $(function () {
+            CKEDITOR.replace('Desription');
+            CKEDITOR.replace('Configuration');
+
+            $('#imgInp').change(function () {
+                var i = $(this).prev('label').clone();
+                var file = '<i class="fa fa-cloud-upload"></i>' + $('#imgInp')[0].files[0].name;
+                $(this).prev('label').empty();
+                $(this).prev('label').append(file);
+            });
+
+
+            // add the rule here
+            $.validator.addMethod("select_validate", function (value, element, arg) {
+                return arg !== value;
+            }, "Value must not equal arg.");
+            //Khi bàn phím được nhấn và thả ra thì sẽ chạy phương thức này
+            $("#frmValidate").validate({
+                rules: {
+                    Product_Name: "required",
+                    Promotion_Price: "required",
+                    //Image: "required",
+                    Desription: {
+                        required: true,
+                        minlength: 200
+                    },
+                    Configuration: {
+                        required: true,
+                        minlength: 200
+                    },
+                    Brand_ID: { select_validate: "" },
+                    Category_ID: { select_validate: "" },
+                },
+                messages: {
+                    Product_Name: "Vui lòng nhập tên sản phẩm",
+                    Promotion_Price: "Vui lòng nhập giá gốc",
+                    //Image: "Vui lòng chọn hình ảnh sản phẩm",
+                    Desription: {
+                        required: "Vui lòng nhập mô tả sản phẩm",
+                        minlength: "Mô tả quá ngắn, tối thiểu 200 ký tự"
+                    },
+                    Configuration: {
+                        required: "Vui lòng nhập cấu hình sản phẩm",
+                        minlength: "Thông số sản phẩm quá ngắn, tối thiểu 200 ký tự"
+                    },
+                    Brand_ID:{ select_validate: "Bạn chưa chọn thương hiệu!" },
+                    Category_ID: { select_validate: "Bạn chưa chọn danh mục sản phẩm!" }
+                }
+            });
+        });
+
+    </script>
+
+}
+
+

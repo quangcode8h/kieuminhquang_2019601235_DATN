@@ -1,0 +1,459 @@
+﻿@{ 
+    var cart = Session["cart"] as List<Watch.Models.DTO.CartDTO>;
+    var user = Session["user"] as Watch.Models.EF.User;
+}
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>@ViewBag.Title | B.Store</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="~/Assets/Client/img/favicon.png">
+
+    @*<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Bitter:400,700,400italic&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css'>*@
+    <link rel="stylesheet" href="~/Assets/Client/css/animate.css">
+    <link rel="stylesheet" href="~/Assets/Client/css/jquery.fancybox.css">
+    <link rel="stylesheet" href="~/Assets/Client/css/jquery.bxslider.css">
+    <link rel="stylesheet" href="~/Assets/Client/css/meanmenu.min.css">
+    @*<link rel="stylesheet" href="~/Assets/Client/css/jquery-ui-slider.css">*@
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="~/Assets/Client/css/nivo-slider.css">
+    <link rel="stylesheet" href="~/Assets/Client/css/owl.carousel.css">
+    <link rel="stylesheet" href="~/Assets/Client/css/owl.theme.css">
+    <link rel="stylesheet" href="~/Assets/Client/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/Assets/Client/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/Assets/Client/css/normalize.css">
+    <link rel="stylesheet" href="~/Assets/Client/css/main.css">
+    <link rel="stylesheet" href="~/Assets/Client/style.css">
+    <link rel="stylesheet" href="~/Assets/Client/css/responsive.css">
+    <link rel="stylesheet" href="~/Assets/Client/css/ie.css">
+    <link rel="stylesheet" href="~/Assets/Client/css/slick.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css" integrity="sha512-17EgCFERpgZKcm0j0fEq1YCJuyAWdz9KUtv1EjVuaOz8pDnh/0nZxmU6BBXwaaxqoi9PQXnRWqlcDB027hgv9A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" integrity="sha512-yHknP1/AwR+yx26cB1y0cjvQUMvEa2PFzt1c9LlS4pRQ5NOTZFWbhBig+X9G9eYW/8m0/4OXNx8pxJ6z57x0dw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="~/Assets/Client/js/vendor/modernizr-2.6.2.min.js"></script>
+    <link href="~/Assets/Admin/notify/css/BrightTheme.css" rel="stylesheet" />
+    <link href="~/Assets/Admin/notify/css/PNotify.css" rel="stylesheet" />
+    <link href="~/Assets/Admin/notify/css/PNotifyBootstrap3.css" rel="stylesheet" />
+    <link href="~/Assets/Admin/notify/css/PNotifyConfirm.css" rel="stylesheet" />
+    <script src="~/Assets/Admin/notify/js/PNotify.js"></script>
+    <script src="~/Assets/Admin/notify/js/PNotifyBootstrap3.js"></script>
+    <script src="~/Assets/Admin/notify/js/PNotifyConfirm.js"></script>
+</head>
+<body>
+    <!-- HEADER-TOP START -->
+    <div class="header-top">
+        <div class="container">
+            <div class="row">
+                <!-- HEADER-LEFT-MENU START -->
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <div class="header-left-menu">
+                        <div class="welcome-info">
+                            Chào mừng bạn đã đến trang mua sắm đồng hồ trực tuyến, chính hãng của <span>B.Store</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- HEADER-LEFT-MENU END -->
+                <!-- HEADER-RIGHT-MENU START -->
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <div class="header-right-menu">
+                        <nav>
+                            <ul class="list-inline">
+                                @if (user != null)
+                                {
+                                    <li><a>Xin chào: <i class="fa fa-user fa-fw"></i>@user.Fullname</a></li>
+                                    <li><a href="/user/order/@user.ID">Đơn mua</li>
+                                    <li><a href="/user/changepass">Đổi mật khẩu</a></li>
+                                    <li><a href="/user/logout">Đăng xuất</a></li>
+                                }
+                                else
+                                {
+                                    <li><a href="/user/login"><i class="fa fa-sign-in fa-fw"></i>Đăng nhập</a></li>
+                                    <li><a href="/user/register"><i class="fa fa-check fa-fw"></i>Đăng ký</a></li>
+                                }
+
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                <!-- HEADER-RIGHT-MENU END -->
+            </div>
+        </div>
+    </div>
+    <!-- HEADER-TOP END -->
+    <!-- HEADER-MIDDLE START -->
+    <section class="header-middle">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <!-- LOGO START -->
+                    <div class="logo">
+                        <a href="/"><img src="~/Assets/Client/img/logo.png" alt="bstore logo" /></a>
+                    </div>
+                    <!-- LOGO END -->
+                    <!-- HEADER-RIGHT-CALLUS START -->
+                    <div class="header-right-callus">
+                        <h3>CSKH 24/7</h3>
+                        <span>0123-456-789</span>s
+                    </div>
+                    <!-- HEADER-RIGHT-CALLUS END -->
+                    <!-- CATEGORYS-PRODUCT-SEARCH START -->
+                    <div class="categorys-product-search ui-widget">
+                        <form action="/tim-kiem" method="get" class="search-form-cat">
+                            <div class="search-product form-group">
+                                <input type="text" class="form-control search-form" name="keyword" id="txtKeyword" placeholder="Tìm kiếm đồng hồ ... " />
+                                <button class="search-button" type="submit">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- CATEGORYS-PRODUCT-SEARCH END -->
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- HEADER-MIDDLE END -->
+    <!-- MAIN-MENU-AREA START -->
+    <header class="main-menu-area">
+        <div class="container">
+            <div class="row">
+                <!-- SHOPPING-CART START -->
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 pull-right shopingcartarea">
+                    <div class="shopping-cart-out pull-right">
+                        <div class="shopping-cart">
+                            <a class="shop-link" href="/cart" title="Xem giỏ hàng">
+                                <i class="fa fa-shopping-cart cart-icon"></i>
+                                <b>Giỏ hàng</b>
+                                <span class="ajax-cart-quantity">@(cart != null ? cart.Count : 0)</span>
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- SHOPPING-CART END -->
+                <!-- Menu mobile start -->
+                <nav class="menu">
+                    <input id="menu__toggle" type="checkbox" class='menu__toggle' />
+                    <label for="menu__toggle" class="menu__toggle-label">
+                        <svg preserveAspectRatio='xMinYMin' viewBox='0 0 24 24'>
+                            <path d='M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z' />
+                        </svg>
+                        <svg preserveAspectRatio='xMinYMin' viewBox='0 0 24 24'>
+                            <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+                        </svg>
+                    </label>
+                    <ol class='menu__content'>
+                        <li class="menu-item"><a href="/">Trang chủ</a></li>
+                        <li class="menu-item">
+                            <a href="#0">Danh mục</a>
+                            <ol class="sub-menu">
+                                @{Html.RenderAction("Category", "Home");}
+                            </ol>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#0">Thương hiệu</a>
+                            <ol class="sub-menu">
+                                @{Html.RenderAction("Brand", "Home", new { type = "menu" });}
+                            </ol>
+                        </li>
+                    </ol>
+                </nav>
+                <!-- Menu mobile end -->
+                <!-- MAINMENU START -->
+                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12 no-padding-right menuarea">
+                    <div class="mainmenu">
+                        <nav>
+                            <ul class="list-inline mega-menu">
+                                <li class="active">
+                                    <a href="/">Trang chủ</a>
+                                </li>
+                                <li>
+                                    <a href="#">Danh mục</a>
+                                    <div class="home-var-menu">
+                                        <ul class="home-menu">
+                                            @{Html.RenderAction("Category", "Home");}
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="#">Thương hiệu</a>
+                                    <div class="home-var-menu">
+                                        <ul class="home-menu">
+                                            @{Html.RenderAction("Brand", "Home", new { type = "menu" });}
+                                        </ul>
+                                    </div>
+                                </li>
+                                @*<li><a href="#">Giới thiệu</a></li>
+                        <li><a href="about-us.html">Liên hệ</a></li>*@
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                <!-- MAINMENU END -->
+            </div>
+
+        </div>
+    </header>
+    @RenderBody()
+    <section class="brand-client-area">
+        <div class="container">
+            <div class="row">
+                <!-- BRAND-CLIENT-ROW START -->
+                <div class="brand-client-row">
+                    <div class="center-title-area">
+                        <h2 class="center-title">Thương hiệu nổi tiếng</h2>
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="row">
+                            <!-- CLIENT-CAROUSEL START -->
+                            <div class="client-carousel">
+                                @{Html.RenderAction("Brand", "Home", new { type = "image" });}
+                            </div>
+                            <!-- CLIENT-CAROUSEL END -->
+                        </div>
+                    </div>
+                </div>
+                <!-- BRAND-CLIENT-ROW END -->
+            </div>
+        </div>
+    </section>
+    <!-- BRAND-CLIENT-AREA END -->
+    <!-- COMPANY-FACALITY START -->
+    <section class="company-facality">
+        <div class="container">
+            <div class="row">
+                <div class="company-facality-row">
+                    <!-- SINGLE-FACALITY START -->
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                        <div class="single-facality">
+                            <div class="facality-icon">
+                                <i class="fa fa-rocket"></i>
+                            </div>
+                            <div class="facality-text">
+                                <h3 class="facality-heading-text">Miễn phí vận chuyển</h3>
+                                <span>Hóa đơn từ 500,000đ</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- SINGLE-FACALITY END -->
+                    <!-- SINGLE-FACALITY START -->
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                        <div class="single-facality">
+                            <div class="facality-icon">
+                                <i class="fa fa-umbrella"></i>
+                            </div>
+                            <div class="facality-text">
+                                <h3 class="facality-heading-text">Hỗ trợ 24/7 </h3>
+                                <span>Chăm sóc khách hàng</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- SINGLE-FACALITY END -->
+                    <!-- SINGLE-FACALITY START -->
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                        <div class="single-facality">
+                            <div class="facality-icon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <div class="facality-text">
+                                <h3 class="facality-heading-text">Khuyến mãi</h3>
+                                <span>Giảm 10% KH mới</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- SINGLE-FACALITY END -->
+                    <!-- SINGLE-FACALITY START -->
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                        <div class="single-facality">
+                            <div class="facality-icon">
+                                <i class="fa fa-refresh"></i>
+                            </div>
+                            <div class="facality-text">
+                                <h3 class="facality-heading-text">15 ngày hoàn trả</h3>
+                                <span>Chính sách đổi trả</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- SINGLE-FACALITY END -->
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- COMPANY-FACALITY END -->
+    <!-- FOOTER-TOP-AREA START -->
+    <section class="footer-top-area">
+        <div class="container">
+            <div class="footer-top-container">
+                <div class="row">
+
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <!-- FOOTER-TOP-RIGHT-1 END -->
+                        <div class="footer-top-right-2">
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" style="display: flex; justify-content: center;">
+                                    <!-- STORE-INFORMATION START -->
+                                    <div class="Store-Information">
+                                        <h2>Thông tin về B.Store</h2>
+                                        <ul>
+                                            <li>
+                                                <div class="info-lefticon">
+                                                    <i class="fa fa-map-marker"></i>
+                                                </div>
+                                                <div class="info-text">
+                                                    <p>Công ty TNHH B.Store </p>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="info-lefticon">
+                                                    <i class="fa fa-phone"></i>
+                                                </div>
+                                                <div class="info-text call-lh">
+                                                    <p>Điện thoại : 0123-456-789</p>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="info-lefticon">
+                                                    <i class="fa fa-envelope-o"></i>
+                                                </div>
+                                                <div class="info-text">
+                                                    <p>Email : tmdt@B-store.com</p>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <!-- STORE-INFORMATION END -->
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" style="display: flex; justify-content: center;">
+                                    <!-- FOTTER-MENU-WIDGET START -->
+                                    <div class="fotter-menu-widget">
+                                        <div class="fotter-menu_item">
+                                            <h2>Danh mục</h2>
+                                            <ul>
+                                                @{Html.RenderAction("Category", "Home");}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <!-- FOTTER-MENU-WIDGET END -->
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 d-flex" style="display: flex; justify-content: center;">
+                                    <!-- FOTTER-MENU-WIDGET START -->
+                                    <div class="fotter-menu-widget">
+                                        <div class="fotter-menu_item">
+                                            <h2>Thương hiệu</h2>
+                                            <ul>
+                                                @{Html.RenderAction("Brand", "Home", new { type = "menu" });}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <!-- FOTTER-MENU-WIDGET END -->
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- FOOTER-TOP-AREA END -->
+    <!-- COPYRIGHT-AREA START -->
+    <footer class="copyright-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="copy-right">
+                        <address>
+                            Copyright ©
+                            <script>document.write(new Date().getFullYear());</script> <a href="#">Công ty TNHH B.Store</a>
+                        </address>
+                    </div>
+                    <div class="scroll-to-top">
+                        <a href="#" class="bstore-scrollertop"><i class="fa fa-angle-double-up"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/Assets/Client/js/vendor/jquery-1.11.3.min.js"></script>
+    <script src="~/Assets/Client/js/jquery.fancybox.js"></script>
+    <script src="~/Assets/Client/js/jquery.bxslider.min.js"></script>
+    <script src="~/Assets/Client/js/jquery.meanmenu.js"></script>
+    <script src="~/Assets/Client/js/owl.carousel.min.js"></script>
+    <script src="~/Assets/Client/js/jquery.nivo.slider.js"></script>
+    @*<script src="~/Assets/Client/js/jqueryui.js"></script>*@
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script src="~/Assets/Client/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Assets/Client/js/wow.js"></script>
+    <script src="~/Assets/Client/js/cart.js"></script>
+    <script src="~/Assets/Client/js/main.js"></script>
+    <script>
+        var common = {
+            init: function () {
+                common.registerEvent();
+            },
+            registerEvent: function () {
+
+                $("#txtKeyword").focus(function () {
+                    $(this).val("");
+                });
+
+                $("#txtKeyword").autocomplete({
+                    minLength: 0,
+                    source: function (request, response) {
+                        $.ajax({
+                            url: "/Product/ListName",//Link lấy dữ liệu gợi ý
+                            dataType: "json",
+                            data: {
+                                q: request.term
+                            },
+                            success: function (res) {
+                                //response(res.data);
+                                response($.map(res.data, function (item) {
+                                    return {
+                                        name: item.Product_Name,
+                                        image: item.Image
+                                    }
+                                }));
+                            }
+                        });
+                    },
+                    focus: function (event, ui) {
+                        $("#txtKeyword").val(ui.item.name);
+                        return false;
+                    },
+                    select: function (event, ui) {
+                        $("#txtKeyword").val(ui.item.name);
+                        //$("#project-id").val(ui.item.value);
+                        //$("#project-description").html(ui.item.desc);
+                        //$("#project-icon").attr("src", "images/" + ui.item.icon);
+
+                        return false;
+                    }
+                })
+                    .autocomplete("instance")._renderItem = function (ul, item) {
+                        return $("<li>")
+                            .append("<div><img src='/Assets/Client/img/product/" + item.image + "' width='80px'/>" + item.name + "</div>")
+                            //.append("<div>" + item.value + "</div>")
+                            .appendTo(ul);
+                    };
+            }
+        }
+        common.init();
+
+        var url = window.location;
+        var element = $('.navbar-nav a.nav-link').filter(function () {
+            return this.href == url;
+        }).addClass('active');
+    </script>
+    @RenderSection("jsSection", required: false)
+</body>
+
+</html>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js" integrity="sha512-XtmMtDEcNz2j7ekrtHvOVR4iwwaD6o/FUJe6+Zq+HgcCsk3kj4uSQQR8weQ2QVj1o0Pk6PwYLohm206ZzNfubg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="text/javascript" src="~/Assets/Client/js/slick.js"></script>

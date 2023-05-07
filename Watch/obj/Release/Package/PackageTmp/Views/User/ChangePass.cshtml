@@ -1,0 +1,99 @@
+﻿
+@{
+    ViewBag.Title = "Đổi mật khẩu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="main-content-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <!-- BSTORE-BREADCRUMB START -->
+                <div class="bstore-breadcrumb">
+                    <a href="/">Trang chủ</a>
+                    <span><i class="fa fa-caret-right fa-fw"></i></span>
+                    <span>Đổi mật khẩu</span>
+                </div>
+                <!-- BSTORE-BREADCRUMB END -->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-4 col-md-2 col-sm-6 col-xs-12">
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                <!-- REGISTERED-ACCOUNT START -->
+                <div class="primari-box registered-account">
+                    <form class="new-account-box" id="frmValidate" method="post" action="/user/frmChangePass">
+                        <h3 class="box-subheading">Đổi mật khẩu tài khoản</h3>
+                        @if (TempData["error"] != null)
+                        {
+                            <h5 class="alert alert-danger text-center">
+                                @TempData["error"]
+                            </h5>
+                        }
+                        <div class="form-content">
+                            <div class="form-group primary-form-group">
+                                <label for="Ex_password">Nhập mật khẩu cũ</label>
+                                <input type="password" name="Ex_password" class="form-control input-feild" required>
+                            </div>
+                            <div class="form-group primary-form-group">
+                                <label for="New_Password">Nhập mật khẩu mới</label>
+                                <input type="password" name="New_Password" id="New_Password" class="form-control input-feild" required>
+                            </div>
+                            <div class="form-group primary-form-group">
+                                <label for="Re_Password">Nhập lại mật khẩu</label>
+                                <input type="password" name="Re_Password"  class="form-control input-feild" required>
+                            </div>
+                            <div class="submit-button text-center">
+                                <button type="submit" id="signinCreate" class="btn main-btn">
+                                    <span>
+                                        <i class="fa fa-lock submit-icon"></i>
+                                        Đổi mật khẩu
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!-- REGISTERED-ACCOUNT END -->
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section jsSection{
+    <script>
+        $(document).ready(function () {
+
+            //Khi bàn phím được nhấn và thả ra thì sẽ chạy phương thức này
+            $("#frmValidate").validate({
+                rules: {
+                    Ex_password: {
+                        required: true
+                    },
+                    New_Password: {
+                        required: true
+                    },
+                    Re_Password: {
+                        required: true,
+                        equalTo: "#New_Password"
+                    }
+                },
+                messages: {
+                    Ex_password: {
+                        required: 'Vui lòng nhập mật khẩu'
+                    },
+                    New_Password: {
+                        required: 'Vui lòng nhập mật khẩu'
+                    },
+                    Re_Password: {
+                        required: 'Vui lòng nhập lại mật khẩu',
+                        equalTo: 'Mật khẩu không trùng'
+                    }
+                }
+            });
+        });
+    </script>
+
+}

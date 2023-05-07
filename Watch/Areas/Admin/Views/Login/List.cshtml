@@ -1,0 +1,95 @@
+﻿
+
+@using Watch.Models.EF;
+@{
+    ViewBag.Title = "Quản lý truy cập";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    var lstPhanQuyen = ViewBag.lstPhanQuyen as List<Role>;
+}
+@model List<Manager>
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            Danh sách truy cập
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-user"></i>Quản lý tài khoản</a></li>
+            <li class="active">Phân quyền admin</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            @if (TempData["message"] != null)
+            {
+                <div class="alert @TempData["alert"] text-center" id="AlertBox">
+                    @TempData["message"]
+                </div>
+            }
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title"></h3>
+                    </div><!-- /.box-header -->
+                    <div class="box-body">
+                        <table id="tblData" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">ID</th>
+                                    <th class="text-center" colspan="2">Thông tin</th>
+                                    <th class="text-center">Tên truy cập</th>
+                                    <th class="text-center">Quyền truy cập</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                <tr>
+                                    <td class="text-center">@item.ID</td>
+                                    <td><img src="~/Assets/Client/img/admin/@item.Image" width="100" /></td>
+                                    <td class="text-center">@item.Fullname</td>
+                                    <td class="text-center">@item.Account</td>
+                                    <td class="text-center">
+                                        @using (Html.BeginForm("UpdateRole", "Login", FormMethod.Post))
+                                        {
+                                            <div style="display: flex; justify-content: center;">
+                                                <select class="form-control" data-id="@item.ID" name="RoleID" style="width: 180px; margin-right: 20px;">
+                                                    @foreach (var jtem in lstPhanQuyen)
+                                                    {
+                                                        if (jtem.RoleID != 1 && jtem.RoleID != 5)
+                                                        {
+                                                            <option value="@jtem.RoleID" @(jtem.RoleID == item.RoleID ? "selected" : "")>@jtem.Detail</option>
+                                                        }
+                                                    }
+                                                </select>
+                                                <input type="hidden" value="@item.ID" name="AdminID" />
+                                                <div class="form-group text-center">
+                                                    <button type="submit" class="btn btn-success">Phân quyền</button>
+                                                </div>
+                                            </div>
+                                        }
+                                    </td>
+                                  
+                                </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </section><!-- /.content -->
+</div>
+
+
+
+
+

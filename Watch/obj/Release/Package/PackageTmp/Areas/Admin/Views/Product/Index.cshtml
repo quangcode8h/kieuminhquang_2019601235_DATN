@@ -1,0 +1,191 @@
+﻿@using Watch.Models.EF;
+@{
+    ViewBag.Title = "Quản lý sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    int dem = 1;
+    var lstPhanQuyen = ViewBag.lstPhanQuyen as List<Role>;
+}
+@model List<Product>
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            Danh sách sản phẩm
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-paragraph"></i>Quản lý sản phẩm</a></li>
+            <li class="active">Danh sách sản phẩm</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            @if (TempData["message"] != null)
+            {
+                <div class="alert @TempData["alert"] text-center" id="AlertBox">
+                    @TempData["message"]
+                </div>
+            }
+        </div>
+        <div class="row">
+            <div class="col-md-4" style="margin-bottom: 10px">
+                <a class="btn btn-lg btn-primary" data-toggle="modal" href="/admin/product/add">Thêm mới </a>
+            </div>
+        </div>
+        <!-- Modal -->
+       
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-body">
+                        <table id="tblData" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">ID</th>
+                                    <th class="text-center">Hình ảnh</th>
+                                    <th class="text-center">Thông tin sản phẩm</th>
+                                    <th class="text-center">Trạng thái</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td class="text-center">@item.ID</td>
+                                        <td width="200px"><img src="~/Assets/Client/img/product/@item.Image" class="img_product"/></td>
+                                        <td class="text-center">
+                                            <span><b>@item.Product_Name</b></span>
+                                            <p>Danh mục: <b>@item.Category.Name</b></p>
+                                            <p>Thương hiệu: <b>@item.Brand.Name</b></p>
+                                            <p>Giá gốc (đ): <b>@item.Price.Value.ToString("N0")</b> @(item.Promotion_Price != null ? Html.Raw(", Giá Km(đ): <b>" + item.Promotion_Price.Value.ToString("N0") + "</b>") : Html.Raw(""))
+                                            <p>Số lượng: @item.Quantity</p>
+                                        </td>
+                                        <td class="text-center">
+                                            @if (item.Status == 1)
+                                            {
+                                                <button class="btn btn-primary btnStatus" data-id="@item.ID" title="Kích hoạt tạm dừng bán">Đang bán</button>
+                                            }
+                                            else if (item.Status == 0)
+                                            {
+                                                <button class="btn btn-warning btnStatus" data-id="@item.ID" title="Kích hoạt đang bán">Tạm dừng bán</button>
+                                            }
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="/admin/product/images/@item.ID" class="btn btn-info" title="Hình ảnh chi tiết"><i class="fa fa-picture-o fa-fw"></i>Hình ảnh</a>
+                                            <a href="/admin/product/edit/@item.ID" class="btn btn-default" title="Cập nhật sản phẩm"><i class="fa fa-edit fa-fw"></i></a>
+                                            <button class="btn btn-danger btnDelete" data-id="@item.ID" title="Xóa sản phẩm"><i class="fa fa-remove fa-fw"></i></button>
+                                        </td>
+                                    </tr>
+                                    dem++;
+                                }
+
+                            </tbody>
+
+                        </table>
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </section><!-- /.content -->
+</div>
+
+
+@section jsSection{
+
+    <script>
+        
+        $(function () {
+           
+            //nếu không có thao tác gì thì ẩn đi
+            $('#AlertBox').removeClass('hide');
+
+            //Sau khi hiển thị lên thì delay 1s và cuộn lên trên sử dụng slideup
+            $('#AlertBox').delay(2000).slideUp(500);
+            $('.btnDelete').off('click').on('click', function () {
+                const notice = PNotify.notice({
+                    title: 'Thông báo',
+                    text: 'Bạn thật sự muốn xóa?',
+                    icon: 'fa fa-question-circle',
+                    width: '360px',
+                    minHeight: '110px',
+                    hide: false,
+                    closer: false,
+                    sticker: false,
+                    destroy: true,
+                    stack: new PNotify.Stack({
+                        dir1: 'down',
+                        modal: true,
+                        firstpos1: 25,
+                        overlayClose: false
+                    }),
+                    modules: new Map([
+                        ...PNotify.defaultModules,
+                        [PNotifyConfirm, {
+                            confirm: true
+                        }]
+                    ])
+                });
+
+                notice.on('pnotify:confirm', () =>
+                    $.ajax({
+                        data: { ID: $(this).data('id') },
+                        url: '/Admin/Product/Delete',
+                        dataType: 'Json',
+                        type: 'POST',
+                        success: function (res) {
+                            if (res.status == true) {
+                                window.location.href = "/admin/product";
+                                PNotify.success({
+                                    title: 'THÔNG BÁO!!',
+                                    text: 'Xóa sản phẩm thành công.'
+                                });
+                            } else {
+                                window.location.href = "/admin/product";
+                                PNotify.error({
+                                    title: 'THÔNG BÁO!!',
+                                    text: 'Xóa sản phẩm KHÔNG thành công. Bạn vui lòng xóa chi tiết sản phẩm trước.'
+                                });
+                            }
+                        }
+                    })
+
+                );
+
+
+            });
+
+            $('.btnStatus').off('click').on('click', function () {
+                $.ajax({
+                    data: { ID: $(this).data('id') },
+                    url: '/Admin/Product/changeStatus',
+                    dataType: 'Json',
+                    type: 'POST',
+                    success: function (res) {
+                        if (res.status == true) {
+                            window.location.href = "/admin/product";
+                            PNotify.success({
+                                title: 'THÔNG BÁO!!',
+                                text: 'Cập nhật trạng thái thành công.'
+                            });
+                        }
+                    }
+                });
+
+            });
+            $('#tblData').DataTable({
+                "columnDefs": {
+                    "targets": 1,
+                    "orderable": false
+                }
+            });
+        });
+
+    </script>
+
+}
+
+

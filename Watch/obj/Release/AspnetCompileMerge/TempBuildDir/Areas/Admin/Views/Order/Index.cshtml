@@ -1,0 +1,230 @@
+﻿
+@using Watch.Models.EF;
+@{ ViewBag.Title = "Đơn hàng mới";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    int dem = 1; }
+@model List<Order>
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            Quản lý đơn hàng
+        </h1>
+        <ol class="breadcrumb">
+            <li class="active">Danh sách đơn hàng</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            @if (TempData["message"] != null)
+            {
+                <div class="alert @TempData["alert"] text-center" id="AlertBox">
+                    @TempData["message"]
+                </div>            }
+            </div>
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title"></h3>
+                    </div><!-- /.box-header -->
+                    <div class="box-body">
+                        <table id="tblData" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">#</th>
+                                    <th class="text-center">Thông tin khách hàng</th>
+                                    <th class="text-center">Thông tin thanh toán</th>
+                                    <th class="text-center">Trạng thái</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                            <tr>
+                                <td class="text-center">@dem</td>
+                                <td>
+                                    <p>Họ tên: <b>@item.CustomerName</b></p>
+                                    <p>SĐT: <b>@item.CustomerPhone</b>, Email: <b>@item.Email</b></p>
+                                    <p>Địa chỉ: <b>@item.CustomerAddress</b></p>
+                                    <p>Ngày đặt: <b>@item.CreatedDate.Value.ToString("dd-MM-yyyy")</b></p>
+                                </td>
+
+                                <td>
+                                    <p>Tổng tiền: <b>@item.TotalMoney.Value.ToString("N0")</b></p>
+                                    <p>Số lượng: <b>@item.TotalQuantity</b></p>
+                                    <p>Thanh toán: <b><span class='label label-default'>Khi nhận hàng</span></b></p>
+                                </td>
+                                 @{ //đơn hàng từ chối
+                                if (item.Status == -1)
+                                {
+                                    <td class="text-center">
+                                        <span class="label label-danger" title="Đơn hàng đã từ chối">Đã từ chối</span> <br />
+                                        @(item.CancerDate != null ? Html.Raw("<p>Ngày từ chối: <b>" + item.CancerDate.Value.ToString("dd-MM-yyyy") + "</b></p>") : Html.Raw(""))
+                                    </td>
+                                    <td>
+                                        <a href="/admin/order/order_detail/@item.ID" class="btn btn-primary" title="Chi tiết đơn hàng"><i class="fa fa-info-circle"></i></a>
+                                    </td> }
+                                 // đơn bị hủy
+                                 else if (item.Status == 0)
+                                 {
+                                    <td class="text-center">
+                                        <span class="label label-danger" title="Đơn hàng đã từ chối">Đã bị hủy</span> <br />
+                                        @(item.CancerDate != null ? Html.Raw("<p>Ngày hủy: <b>" + item.CancerDate.Value.ToString("dd-MM-yyyy") + "</b></p>") : Html.Raw(""))
+                                    </td>
+                                    <td>
+                                        <a href="/admin/order/order_detail/@item.ID" class="btn btn-primary" title="Chi tiết đơn hàng"><i class="fa fa-info-circle"></i></a>
+                                    </td> }
+                                //đơn hàng mới
+                                else if (item.Status == 1)
+                                {
+                                    <td class="text-center">
+                                        <button class="btn btn-primary btnStatus" data-id="@item.ID" title="Click để kích hoạt vận chuyển">Đơn hàng mới</button> <br />
+                                        @(item.CreatedDate != null ? Html.Raw("<p>Ngày đặt hàng: <b>" + item.CreatedDate.Value.ToString("dd-MM-yyyy") + "</b></p>") : Html.Raw(""))
+                                    </td>
+                                    <td>
+                                        <a href="/admin/order/order_detail/@item.ID" class="btn btn-primary" title="Chi tiết đơn hàng"><i class="fa fa-info-circle"></i></a>
+                                        <button class="btn btn-danger btnDelete" data-id="@item.ID" title="Từ chối đơn hàng"><i class="fa fa-remove"></i></button>
+                                    </td> }
+                                //đơn hàng đang vận chuyển
+                                else if (item.Status == 2)
+                                {
+                                    <td class="text-center">
+                                        <button class="btn btn-warning btnStatus" data-id="@item.ID" title="Click để kích hoạt thanh toán">Đang vận chuyển</button> <br />
+                                        @(item.ShipDate != null ? Html.Raw("<p>Ngày vận chuyển: <b>" + item.ShipDate.Value.ToString("dd-MM-yyyy") + "</b></p>") : Html.Raw(""))
+                                    </td>
+                                    <td>
+                                        <a href="/admin/order/order_detail/@item.ID" class="btn btn-primary" title="Chi tiết đơn hàng"><i class="fa fa-info-circle"></i></a>
+                                        <button class="btn btn-danger btnDelete" data-id="@item.ID" title="Từ chối đơn hàng"><i class="fa fa-remove"></i></button>
+                                    </td> }
+                                else if (item.Status == 3 || item.Payment == 1)
+                                {
+                                    <td class="text-center">
+                                        <button class="btn btn-success" data-id="@item.ID" title="Khách hàng đã thanh toán">Đã thanh toán</button> <br />
+                                        @(item.PaidDate != null ? Html.Raw("<p>Ngày thanh toán: <b>" + item.PaidDate.Value.ToString("dd-MM-yyyy") + "</b></p>") : Html.Raw(""))
+                                    </td>
+                                    <td>
+                                        <a href="/admin/order/order_detail/@item.ID" class="btn btn-primary" title="Chi tiết đơn hàng"><i class="fa fa-info-circle"></i></a>
+                                    </td> }
+                                     dem++;}
+
+                    </tr>}
+
+                     </tbody>
+
+                        </table>
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </section><!-- /.content -->
+</div>
+
+
+@section jsSection{
+
+    <script>
+
+        $(function () {
+
+
+            $("#tblData").DataTable();
+            //nếu không có thao tác gì thì ẩn đi
+            $('#AlertBox').removeClass('hide');
+
+            //Sau khi hiển thị lên thì delay 1s và cuộn lên trên sử dụng slideup
+            $('#AlertBox').delay(2000).slideUp(500);
+
+            $('.btnDelete').off('click').on('click', function () {
+                const notice = PNotify.notice({
+                    title: 'Thông báo',
+                    text: 'Bạn thật sự muốn từ chối đơn hàng này?',
+                    icon: 'fa fa-question-circle',
+                    width: '360px',
+                    minHeight: '110px',
+                    hide: false,
+                    closer: false,
+                    sticker: false,
+                    destroy: true,
+                    stack: new PNotify.Stack({
+                        dir1: 'down',
+                        modal: true,
+                        firstpos1: 25,
+                        overlayClose: false
+                    }),
+                    modules: new Map([
+                        ...PNotify.defaultModules,
+                        [PNotifyConfirm, {
+                            confirm: true
+                        }]
+                    ])
+                });
+
+                notice.on('pnotify:confirm', () =>
+                    $.ajax({
+                        data: { ID: $(this).data('id') },
+                        url: '/Admin/Order/Delete',
+                        dataType: 'Json',
+                        type: 'POST',
+                        success: function (res) {
+                            if (res.status == true) {
+                                PNotify.success({
+                                    title: 'THÔNG BÁO!!',
+                                    text: 'Từ chối đơn hàng thành công.'
+                                });
+                                setTimeout(function () { window.location.href = "/admin/order/index"; }, 2000);
+                            } else {
+                                PNotify.error({
+                                    title: 'THÔNG BÁO!!',
+                                    text: 'Từ chối KHÔNG thành công.'
+                                });
+                            }
+                        }
+                    })
+
+                );
+
+
+            });
+
+            $('.btnStatus').off('click').on('click', function () {
+
+                $.ajax({
+                    data: { ID: $(this).data('id') },
+                    url: '/Admin/Order/changeStatus',
+                    dataType: 'Json',
+                    type: 'POST',
+                    success: function (res) {
+                        if (res.status == true) {
+                            PNotify.success({
+                                title: 'THÔNG BÁO!!',
+                                text: 'Cập nhật trạng thái thành công.'
+                            });
+                            setTimeout(function () { window.location.href = "/admin/order/index"; }, 2000);
+                        } else {
+                            PNotify.error({
+                                title: 'THÔNG BÁO!!',
+                                text: 'Cập nhật trạng thái KHÔNG thành công'
+                            });
+                        }
+                    }
+                });
+
+            });
+
+        });
+
+    </script>
+
+}
+
+
+
+
+

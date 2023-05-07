@@ -1,0 +1,310 @@
+﻿@using Watch.Models.DTO;
+@using Watch.Models.EF;
+@{
+    ViewBag.Title = "Quản lý bảo hành";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    var lstProduct = ViewBag.lstProduct as List<Order_DetailDTO>;
+}
+
+@using Watch.Models.EF;
+
+@model List<Warranty>
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            Danh sách bảo hành sản phẩm
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-table"></i>Quản lý chung</a></li>
+            <li class="active">Danh sách bảo hành sản phẩm</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            @if (TempData["message"] != null)
+            {
+                <div class="alert @TempData["alert"] text-center text-uppercase" id="AlertBox">
+                    @TempData["message"]
+                </div>
+            }
+        </div>
+        <div class="row">
+            <div class="col-md-4" style="margin-bottom: 10px">
+                <button class="btn btn-lg btn-primary" data-toggle="modal" data-target="#add">Thêm mới </button>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-center text-uppercase" id="exampleModalLabel">Thêm mới bảo hành sản phẩm</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @using (Html.BeginForm("frmAdd", "warranty", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            <div class="form-group col-sm-8">
+                                <label for="recipient-name" class="col-form-label">Họ và tên khách hàng:</label>
+                                <input type="text" name="CustomerName" class="form-control" required>
+                            </div>
+                            <div class="form-group col-sm-4">
+                                <label for="recipient-name" class="col-form-label">Số điện thoại:</label>
+                                <input type="text" name="CustomerPhone" class="form-control" required>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label>Ngày bắt đầu bảo hành:</label>
+                                <div class="input-group">
+                                    <input type="datetime-local" class="form-control" name="Date_Start" required />
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label>Ngày kết thúc bảo hành:</label>
+                                <div class="input-group">
+                                    <input type="datetime-local" class="form-control" name="Date_End" required />
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-12">
+                                <label for="recipient-name" class="col-form-label">Sản phẩm bảo hành:</label>
+                                <select class="form-control" name="Product_ID">
+                                    <option  value="">---Chọn sản phẩm---</option>
+                                    @foreach (var item in lstProduct)
+                                    {
+                                        <option value="@item.Product_ID">@item.Product_Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group col-sm-12">
+                                <label for="recipient-name" class="col-form-label">Nội dung bảo hành:</label>
+                                <textarea class="form-control" rows="3" name="Description"></textarea>
+                            </div>
+                            <div class="form-group text-center">
+                                <button type="submit" class="btn btn-primary btn-lg">Thêm mới</button>
+                            </div>
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title"></h3>
+                    </div><!-- /.box-header -->
+                    <div class="box-body">
+                        <table id="tblData" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">ID</th>
+                                    <th class="text-center">Nhân viên BH</th>
+                                    <th class="text-center">Khách hàng</th>
+                                    <th class="text-center">Sản phẩm</th>
+                                    <th class="text-center">Thời gian</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+
+                                    <tr>
+                                        <td class="text-center">@item.ID</td>
+                                        <td class="text-center">@item.Manager.Fullname</td>
+                                        <td class="text-center">
+                                            <p>Họ tên:<b>@item.CustomerName</b></p>
+                                            <p>SĐT:<b>@item.CustomerPhone</b></p>
+                                        </td>
+                                        <td class="text-center">@item.Product.Product_Name</td>
+                                        <td class="text-center">
+                                            <p>Ngày BĐ:<b>@item.Date_Start.Value.ToString("dd-MM-yyyy")</b></p>
+                                            <p>Ngày KT:<b>@item.Date_End.Value.ToString("dd-MM-yyyy")</b></p>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-default btnEdit" data-id="@item.ID" title="Cập nhật bảo hành sản phẩm"><i class="fa fa-edit"></i></button>
+                                            <button class="btn btn-danger btnDelete" data-id="@item.ID" title="Xóa bảo hành sản phẩm"><i class="fa fa-remove"></i></button>
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </section><!-- /.content -->
+</div>
+<!-- Modal -->
+<div class="modal fade edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center text-uppercase" id="exampleModalLabel">Cập nhật bảo hành sản phẩm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("frmEdit", "warranty", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    <input type="hidden" name="ID" id="ID" />
+                    <div class="form-group col-sm-8">
+                        <label for="recipient-name" class="col-form-label">Họ và tên khách hàng:</label>
+                        <input type="text" name="CustomerName" id="CustomerName" class="form-control" required>
+                    </div>
+                    <div class="form-group col-sm-4">
+                        <label for="recipient-name" class="col-form-label">Số điện thoại:</label>
+                        <input type="text" name="CustomerPhone" id="CustomerPhone" class="form-control" required>
+                    </div>
+                    <div class="form-group col-sm-6">
+                        <label>Ngày bắt đầu bảo hành:</label>
+                        <div class="input-group">
+                            <input type="datetime-local" class="form-control" name="Date_Start" id="Date_Start" />
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-6">
+                        <label>Ngày kết thúc bảo hành:</label>
+                        <div class="input-group">
+                            <input type="datetime-local" class="form-control" name="Date_End" id="Date_End" />
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-12">
+                        <label for="recipient-name" class="col-form-label">Sản phẩm bảo hành:</label>
+                        <select class="form-control" name="Product_ID" id="Product_ID">
+                            <option value="">---Chọn sản phẩm---</option>
+                            @foreach (var item in lstProduct)
+                            {
+                                <option value="@item.Product_ID">@item.Product_Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-12">
+                        <label for="recipient-name" class="col-form-label">Nội dung bảo hành:</label>
+                        <textarea class="form-control" rows="3" name="Description" id="Description"></textarea>
+                    </div>
+
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-primary">Cập nhật</button>
+                    </div>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section jsSection{
+
+    <script>
+        $(function () {
+            $("#tblData").DataTable();
+            $(".datepicker").datepicker({
+                format: 'dd/mm/yyyy',
+                todayHighlight: true,
+                autoclose: true
+            });
+            //nếu không có thao tác gì thì ẩn đi
+            $('#AlertBox').removeClass('hide');
+
+            //Sau khi hiển thị lên thì delay 1s và cuộn lên trên sử dụng slideup
+            $('#AlertBox').delay(2000).slideUp(500);
+
+
+            $('.btnDelete').off('click').on('click', function () {
+
+                const notice = PNotify.notice({
+                    title: 'Thông báo',
+                    text: 'Bạn thật sự muốn xóa?',
+                    icon: 'fa fa-question-circle',
+                    width: '360px',
+                    minHeight: '110px',
+                    hide: false,
+                    closer: false,
+                    sticker: false,
+                    destroy: true,
+                    stack: new PNotify.Stack({
+                        dir1: 'down',
+                        modal: true,
+                        firstpos1: 25,
+                        overlayClose: false
+                    }),
+                    modules: new Map([
+                        ...PNotify.defaultModules,
+                        [PNotifyConfirm, {
+                            confirm: true
+                        }]
+                    ])
+                });
+
+                notice.on('pnotify:confirm', () =>
+                    $.ajax({
+                        data: { ID: $(this).data('id') },
+                        url: '/Admin/warranty/Delete',
+                        dataType: 'Json',
+                        type: 'POST',
+                        success: function (res) {
+                            if (res.status == true) {
+                                PNotify.success({
+                                    title: 'THÔNG BÁO!!',
+                                    text: 'Xóa bảo hành sản phẩm thành công.'
+                                });
+                                setTimeout(function () {
+                                    window.location.href = "/admin/warranty";
+                                }, 1000);
+
+                            } else {
+                                PNotify.error({
+                                    title: 'THÔNG BÁO!!',
+                                    text: 'Xóa bảo hành sản phẩm KHÔNG thành công.'
+                                });
+                            }
+                        }
+                    })
+
+                );
+                //notice.on('pnotify:cancel', () => alert('Oh ok. Chicken, I see.'));
+
+            });
+
+            $('.btnEdit').click(function (event) {
+                $('.edit').modal('show');
+                //alert($(this).data('id'));
+                var ID = $(this).data('id');
+                $.ajax({
+                    url: "/Admin/warranty/GetByID/" + ID,
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (res) {
+                        $('#CustomerName').val(res.CustomerName);
+                        $('#CustomerPhone').val(res.CustomerPhone);
+                        $('textarea#Description').val(res.Description);
+                        $('#Date_Start').val(res.Date_Start);
+                        $('#Date_End').val(res.Date_End);
+                        $('select#Product_ID').val(res.Product_ID);
+                        $('#ID').val(res.ID);
+
+                    }
+                });
+            });
+        });
+
+    </script>
+
+}
+
+

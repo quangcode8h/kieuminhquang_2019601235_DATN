@@ -1,0 +1,184 @@
+﻿@using Watch.Models.EF;
+@{
+    ViewBag.Title = "Hình ảnh sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    var lstImage = ViewBag.lstImage as List<Image>;
+    var product = ViewBag.Product as Product;
+}
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            Hình ảnh sản phẩm
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-paragraph"></i>Quản lý sản phẩm</a></li>
+            <li><a href="/admin/product">Danh sách sản phẩm</a></li>
+            <li class="active">Hình ảnh sản phẩm</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            @if (TempData["message"] != null)
+            {
+                <div class="alert @TempData["alert"] text-center" id="AlertBox">
+                    @TempData["message"]
+                </div>
+            }
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-info">
+                    <div class="box-header">
+                        <h3 class="box-title">
+                            Hình ảnh sản phẩm: <b>@product.Product_Name</b><br>
+                        </h3>
+                    </div><!-- /.box-header -->
+                    <div class="box-body pad">
+                        <form action="/admin/product/Upload_Mutil_Image" method="post" enctype="multipart/form-data">
+                            
+                            <label for="">Thêm ảnh chi tiết sản phẩm</label>
+                            <div class="form-group mul_image">
+                                <input type="hidden" name="Product_ID" value="@product.ID">
+                                <label for="file_upload" class="custom-file-upload">
+                                    <i class="fa fa-cloud-upload"></i> Chọn 1 hoặc nhiều hình ảnh
+                                </label>
+                                <label for="file_upload" class="btn-image">Chọn ảnh</label>
+                                <input id="file_upload" name="images" type="file" style="display: none;" multiple accept="image/*">
+                                <br>
+                            </div>
+                            <div class="form-group text-center">
+                                <button type="submit" class="btn btn-primary">Thêm mới</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-body">
+                        <div class="list_images">
+                            @if (lstImage.Count > 0)
+                            {
+                                foreach (var item in lstImage)
+                                {
+                                    <div class="box_image">
+                                        <img src="~/Assets/Client/img/product-detail/@item.Image1" class="picture-box">
+                                        <div class="wrap-btn-delete"><span data-id="@item.ID" data-proid="@product.ID" class="btn-delete-image">x</span></div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                        </div><!-- /.box-body -->
+                    </div><!-- /.box -->
+
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </section><!-- /.content -->
+    </div>
+
+
+    @section jsSection{
+
+        <script>
+            $(function () {
+                
+                //nếu không có thao tác gì thì ẩn đi
+                $('#AlertBox').removeClass('hide');
+
+                //Sau khi hiển thị lên thì delay 1s và cuộn lên trên sử dụng slideup
+                $('#AlertBox').delay(2000).slideUp(500);
+
+                $('#file_upload').change(function () {
+                    var input = document.getElementById('file_upload');
+                    var file = '<i class="bi bi-cloud-arrow-up-fill"></i>' + 'Bạn đã chọn <b>' + input.files.length + '</b> hình ảnh.';
+                    $(this).prev('label').empty();
+                    $(this).prev('label').append(file);
+
+
+                    for (var i = 0; i <= input.files.length; ++i) {
+                        // console.log(input.files.item(i))
+                        var image = '<img  src="' + URL.createObjectURL(input.files.item(i)) + '" alt="your image" width="100px" class="margin"/>';
+                        // var file = '<p style="font-weight: bold">' + input.files.item(i).name + '</p>';
+                        $('.mul_image').append(image);
+                    }
+
+                });
+
+                $('button[type="submit"]').click(function () {
+
+                    var input = document.getElementById('file_upload');
+                  
+                    if (input.files.length == 0 ) {
+                        PNotify.error({
+                            title: 'THÔNG BÁO!!',
+                            text: 'Vui lòng chọn ảnh trạng thái tiếp nhận.'
+                        });
+
+                        return false;
+                    }
+
+                });
+                $('.btn-delete-image').off('click').on('click', function () {
+                    var product_id = $(this).data('proid');
+                    const notice = PNotify.notice({
+                        title: 'Thông báo',
+                        text: 'Bạn thật sự muốn xóa ảnh này?',
+                        icon: 'fa fa-question-circle',
+                        width: '360px',
+                        minHeight: '110px',
+                        hide: false,
+                        closer: false,
+                        sticker: false,
+                        destroy: true,
+                        stack: new PNotify.Stack({
+                            dir1: 'down',
+                            modal: true,
+                            firstpos1: 25,
+                            overlayClose: false
+                        }),
+                        modules: new Map([
+                            ...PNotify.defaultModules,
+                            [PNotifyConfirm, {
+                                confirm: true
+                            }]
+                        ])
+                    });
+
+                    notice.on('pnotify:confirm', () =>
+                        $.ajax({
+                            data: {},
+                            url: '/admin/product/Del_Images/' + $(this).data('id'),
+                            dataType: 'Json',
+                            type: 'POST',
+                            success: function () {
+                                PNotify.success({
+                                    title: 'THÔNG BÁO!!',
+                                    text: 'Xóa ảnh thành công.'
+                                });
+                                setTimeout(function () {
+                                    window.location.href = "/admin/product/images/" + product_id;
+                                }, 500);
+
+                            }
+                        })
+
+                    );
+
+
+                });
+
+
+            });
+
+        </script>
+
+    }
+
+
