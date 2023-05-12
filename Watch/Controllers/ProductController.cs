@@ -86,48 +86,7 @@ namespace Watch.Controllers
 
             var product_name = new List<Product>();//Tìm theo tên sản phẩm
             ViewBag.KeyWord = keyword;
-            foreach (var item in key)
-            {
-                if (type != null && order != null)
-                {
-                    if (type == "name")
-                    {
-                        if (order == "a-to-z")
-                        {
-                            product_name = db.Products.Where(x => x.Product_Name.Contains(item) && x.Status == 1).OrderBy(x => x.Product_Name).ToList();
-                        }
-                        else
-                        {
-                            product_name = db.Products.Where(x => x.Product_Name.Contains(item) && x.Status == 1).OrderByDescending(x => x.Product_Name).ToList();
-                        }
-                    }
-                    else
-                    {
-                        if (order == "desc")
-                        {
-                            product_name = db.Products.Where(x => x.Product_Name.Contains(item) && x.Status == 1).OrderByDescending(x => x.Promotion_Price).ToList();
-                        }
-                        else
-                        {
-                            product_name = db.Products.Where(x => x.Product_Name.Contains(item) && x.Status == 1).OrderBy(x => x.Promotion_Price).ToList();
-                        }
-                    }
-
-                    ViewBag.Type = type;
-                    ViewBag.Order = order;
-                }
-                else
-                {
-                    product_name = (from b in db.Products
-                                    where b.Status == 1 && b.Product_Name.Contains(item)
-                                    select b).ToList();
-                    if (db.Products.Where(x => x.Product_Name == keyword).Count() > 0)
-                    {
-                        product_name.Remove(db.Products.Where(x => x.Product_Name == keyword).First());
-                        product_name.Insert(0, db.Products.Where(x => x.Product_Name == keyword).First());
-                    }
-                }
-            }
+            product_name = db.Products.Where(p => p.Product_Name.Contains(keyword) && p.Status == 1).ToList();
             ViewBag.lstCategory = db.Categories.ToList();
             ViewBag.lstBrand = db.Brands.ToList();
             ViewBag.ProductCount = product_name.Count;

@@ -33,55 +33,82 @@
                 </div>
             }
         </div>
-       
+        
+
         <div class="row">
             <div class="col-xs-12">
                 <div class="box">
-                    <div class="box-header">
-                        <p>Khách hàng: <span style="color: blue">@order.CustomerName</span></p>
-                        <p>Ngày đặt hàng: <span style="color: blue">@order.CreatedDate.Value.ToString("dd/MM/yyyy")</span></p>
-                    </div><!-- /.box-header -->
-                    <div class="box-body">
-                        <table id="tblData" class="table table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th class="text-center">Sản phẩm</th>
-                                    <th class="text-center">Số lượng</th>
-                                    <th class="text-center">Đơn giá</th>
-                                    <th class="text-center">Thành tiền</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model)
-                                {
-                                    <tr>
-                                        <td>@dem</td>
-                                        <td>@item.Product.Product_Name</td>
-                                        <td class="text-center">@item.Quantity</td>
-                                        <td class="text-center">@item.Price.Value.ToString("N0")</td>
-                                        <td class="text-center">@item.Amount.Value.ToString("N0")</td>
-                                    </tr>
-                                    dem++;
-                                    total += (long)item.Amount;
-                                    quantity += (int)item.Quantity;
-                                }
-                                <tr>
-                                    <td colspan="3"></td>
-                                    <td class="text-center"><b>Tổng số lượng:</b> </td>
-                                    <td class="text-center"><span class="price">@quantity</span></td>
-                                </tr>
-                                <tr>
-                                    <td colspan="3"></td>
-                                    <td class="text-center"><b>Tổng tiền:</b> </td>
-                                    <td class="text-center"><span class="price">@total.ToString("N0")</span> ₫</td>
-                                </tr>
-                            </tbody>
+                    <div id="Grid">
+                        <div style="padding: 10px; border: 2px solid #e5abaa; color: #18167e; ">
+                            <p style="padding: 10px;">Công ty B.Store </p>
+                            <span style="padding: 10px;">Mã đơn: @order.ID </span>
+                            <h2 style="text-align: center;">HÓA ĐƠN BÁN HÀNG</h2>
+                            <div class="box-header" style="color: #18167e; ">
+                                <h4>Khách hàng: <span>@order.CustomerName</span>  </h4>
+                                <h4>Số điện thoại: <span>@order.CustomerPhone</span></h4>
+                                <h4>Địa chỉ: <span>@order.CustomerAddress</span></h4>
+                                <h4>Ngày đặt hàng: <span>@order.CreatedDate.Value.ToString("dd/MM/yyyy")</span></h4>
+                            </div><!-- /.box-header -->
 
-                        </table>
-                    </div><!-- /.box-body -->
+                            <div class="box-body">
+                                <table id="tblData" border="1" style="width: 100%; color: #18167e; ">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">STT</th>
+                                            <th class="text-center">Sản phẩm</th>
+                                            <th class="text-center">Số lượng</th>
+                                            <th class="text-center">Đơn giá</th>
+                                            <th class="text-center">Thành tiền</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td style="text-align: center;">@dem</td>
+                                                <td style="text-align: center;">@item.Product.Product_Name</td>
+                                                <td style="text-align: center;">@item.Quantity</td>
+                                                <td style="text-align: center;">@item.Price.Value.ToString("N0")</td>
+                                                <td style="text-align: center;">@item.Amount.Value.ToString("N0")</td>
+                                            </tr>
+                                            dem++;
+                                            total += (long)item.Amount;
+                                            quantity += (int)item.Quantity;
+                                        }
+                                        <tr>
+                                            <td colspan="3"></td>
+                                            <td style="text-align: center;"><b>Tổng số lượng:</b> </td>
+                                            <td style="text-align: center;"><span class="price">@quantity</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3"></td>
+                                            <td style="text-align: center;"><b>Tổng tiền:</b> </td>
+                                            <td style="text-align: center;"><span class="price">@total.ToString("N0")</span> ₫</td>
+                                        </tr>
+                                    </tbody>
+
+                                </table>
+                                <div>
+                                    <table style="width: 80%; margin: 0 auto; text-align: center; margin-top: 20px; color: #18167e; ">
+                                        <tr>
+                                            <td>Khách hàng</td>
+                                            <td>Chủ cửa hàng</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>@order.CustomerName</b></td>
+                                            <td><b>Minh Quang</b></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div><!-- /.box-body -->
+                        </div>
+                    </div>
                 </div><!-- /.box -->
-
+                @using (Html.BeginForm("Export", "Order", FormMethod.Post))
+                {
+                    <input type="hidden" name="GridHtml" />
+                    <input type="submit" id="btnSubmit" value="Xuất file" />
+                }
             </div><!-- /.col -->
         </div><!-- /.row -->
     </section><!-- /.content -->
@@ -90,12 +117,12 @@
 
 @section jsSection{
 
-    <script>
+    <script type="text/javascript">
         $(function () {
-            
-
+            $("#btnSubmit").click(function () {
+                $("input[name='GridHtml']").val($("#Grid").html());
+            });
         });
-
     </script>
 
 }

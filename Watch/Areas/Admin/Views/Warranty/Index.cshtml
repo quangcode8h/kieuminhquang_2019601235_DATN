@@ -109,6 +109,7 @@
                                     <th class="text-center">Nhân viên BH</th>
                                     <th class="text-center">Khách hàng</th>
                                     <th class="text-center">Sản phẩm</th>
+                                    <th class="text-center">Nội dung</th>
                                     <th class="text-center">Thời gian</th>
                                     <th></th>
                                 </tr>
@@ -117,23 +118,27 @@
                                 @foreach (var item in Model)
                                 {
 
-                                    <tr>
-                                        <td class="text-center">@item.ID</td>
-                                        <td class="text-center">@item.Manager.Fullname</td>
-                                        <td class="text-center">
-                                            <p>Họ tên:<b>@item.CustomerName</b></p>
-                                            <p>SĐT:<b>@item.CustomerPhone</b></p>
-                                        </td>
-                                        <td class="text-center">@item.Product.Product_Name</td>
-                                        <td class="text-center">
+                                <tr>
+                                    <td class="text-center">@item.ID</td>
+                                    <td class="text-center">@item.Manager.Fullname</td>
+                                    <td class="text-center">
+                                        <p>Họ tên:<b>@item.CustomerName</b></p>
+                                        <p>SĐT:<b>@item.CustomerPhone</b></p>
+                                    </td>
+                                    <td class="text-center">@item.Product.Product_Name</td>
+                                    <td class="text-center">@item.Description</td>
+                                    <td class="text-center">
+                                        @if (item.Date_Start != null && item.Date_End != null)
+                                        {
                                             <p>Ngày BĐ:<b>@item.Date_Start.Value.ToString("dd-MM-yyyy")</b></p>
                                             <p>Ngày KT:<b>@item.Date_End.Value.ToString("dd-MM-yyyy")</b></p>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-default btnEdit" data-id="@item.ID" title="Cập nhật bảo hành sản phẩm"><i class="fa fa-edit"></i></button>
-                                            <button class="btn btn-danger btnDelete" data-id="@item.ID" title="Xóa bảo hành sản phẩm"><i class="fa fa-remove"></i></button>
-                                        </td>
-                                    </tr>
+                                        }
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-default btnEdit" data-id="@item.ID" title="Cập nhật bảo hành sản phẩm"><i class="fa fa-edit"></i></button>
+                                        <button class="btn btn-danger btnDelete" data-id="@item.ID" title="Xóa bảo hành sản phẩm"><i class="fa fa-remove"></i></button>
+                                    </td>
+                                </tr>
                                 }
 
                             </tbody>

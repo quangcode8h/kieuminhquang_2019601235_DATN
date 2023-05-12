@@ -71,7 +71,7 @@ namespace Watch.Controllers
                 entity.Password = handleMd5.EncryptString(entity.Password);
                 db.Users.Add(entity);
                 db.SaveChanges();
-                TempData["error"] = "Đăng ký thành công. Vui lòng đăng nhập lại để tiếp tục.";
+                TempData["success"] = "Đăng ký thành công. Vui lòng đăng nhập lại để tiếp tục.";
                 return Redirect("/user/login");
             }
         }
@@ -115,7 +115,7 @@ namespace Watch.Controllers
             var listProduct = (from p in db.Products join od in db.Order_Detail on p.ID equals od.Product_ID 
                                join o in db.Orders on od.Order_ID equals o.ID where o.User_ID == ID select new
                                {
-                                   p.ID, p.Product_Name, p.Price, p.Image, od.Order_ID, od.Quantity
+                                   p.ID, p.Product_Name, p.Promotion_Price, p.Image, od.Order_ID, od.Quantity
                                }).ToList();
             if (lisrOrder == null) page = 1;
             List<ProductInOrder> listProductInOrder = new List<ProductInOrder>();
@@ -140,7 +140,7 @@ namespace Watch.Controllers
                             ProductInOrder pro = new ProductInOrder();
                             pro.id = p.ID;
                             pro.ProductName = p.Product_Name;
-                            pro.Price = double.Parse(p.Price.ToString());
+                            pro.Price = double.Parse(p.Promotion_Price.ToString());
                             pro.Image = p.Image;
                             pro.OrderID = long.Parse(p.Order_ID.ToString());
                             pro.amount = int.Parse(p.Quantity.ToString());

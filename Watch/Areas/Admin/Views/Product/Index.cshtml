@@ -138,16 +138,16 @@
                         type: 'POST',
                         success: function (res) {
                             if (res.status == true) {
-                                window.location.href = "/admin/product";
+                                setTimeout(function () { window.location.href = "/admin/product"; }, 2000);
                                 PNotify.success({
                                     title: 'THÔNG BÁO!!',
                                     text: 'Xóa sản phẩm thành công.'
                                 });
                             } else {
-                                window.location.href = "/admin/product";
+                                setTimeout(function () { window.location.href = "/admin/product"; }, 2000);
                                 PNotify.error({
                                     title: 'THÔNG BÁO!!',
-                                    text: 'Xóa sản phẩm KHÔNG thành công. Bạn vui lòng xóa chi tiết sản phẩm trước.'
+                                    text: 'Xóa sản phẩm KHÔNG thành công do lỗi hoặc ràng buộc khóa ngoại.'
                                 });
                             }
                         }

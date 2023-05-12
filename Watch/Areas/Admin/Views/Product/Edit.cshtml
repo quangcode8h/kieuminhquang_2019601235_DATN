@@ -63,11 +63,11 @@
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label>Giá gốc</label>
-                                        <input type="number" name="Promotion_Price"  value="@product.Price" class="form-control">
+                                        <input type="number" name="Price"  value="@product.Price" class="form-control">
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label>Giá khuyến mại</label>
-                                        <input type="number" name="Price"  value="@product.Promotion_Price" class="form-control">
+                                        <input type="number" name="Promotion_Price"  value="@product.Promotion_Price" class="form-control">
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label>Số lượng</label>
@@ -146,7 +146,7 @@
             $("#frmValidate").validate({
                 rules: {
                     Product_Name: "required",
-                    Promotion_Price: "required",
+                    Price: "required",
                     //Image: "required",
                     Desription: {
                         required: true,
@@ -161,7 +161,7 @@
                 },
                 messages: {
                     Product_Name: "Vui lòng nhập tên sản phẩm",
-                    Promotion_Price: "Vui lòng nhập giá gốc",
+                    Price: "Vui lòng nhập giá gốc sản phẩm",
                     //Image: "Vui lòng chọn hình ảnh sản phẩm",
                     Desription: {
                         required: "Vui lòng nhập mô tả sản phẩm",

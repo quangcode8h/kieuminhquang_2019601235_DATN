@@ -258,4 +258,3 @@ C:\Users\ASUS\Desktop\Watch\obj\Debug\Watch.csproj.CoreCompileInputs.cache
 C:\Users\ASUS\Desktop\Watch\obj\Debug\Watch.csproj.CopyComplete
 C:\Users\ASUS\Desktop\Watch\obj\Debug\Watch.dll
 C:\Users\ASUS\Desktop\Watch\obj\Debug\Watch.pdb
-C:\Users\ASUS\Desktop\Watch\obj\Debug\Watch.csproj.AssemblyReference.cache

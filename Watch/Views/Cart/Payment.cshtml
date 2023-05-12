@@ -58,17 +58,17 @@
                                                     <strong>@item.Product.Product_Name</strong><br>
                                                     Số lượng: <strong>@item.Quantity</strong><br>
                                                     Đơn giá:
-                                                    @if (item.Product.Price == null)
+                                                    @if (item.Product.Promotion_Price == null)
                                                     {
-                                                        <strong>@item.Product.Promotion_Price.Value.ToString("N0")</strong><br>
-                                                        totalmoney += item.Product.Promotion_Price * item.Quantity;
+                                                        <strong>@item.Product.Price.Value.ToString("N0")</strong><br>
+                                                        totalmoney += item.Product.Price * item.Quantity;
 
                                                     }
                                                     else
                                                     {
-                                                        <strong>@item.Product.Price.Value.ToString("N0")</strong><br>
-                                                        totalmoney += item.Product.Price * item.Quantity;
-                                                        sum = item.Product.Price * item.Quantity;
+                                                        <strong>@item.Product.Promotion_Price.Value.ToString("N0")</strong><br>
+                                                        totalmoney += item.Product.Promotion_Price * item.Quantity;
+                                                        sum = item.Product.Promotion_Price * item.Quantity;
                                                     }
 
                                                 </td>

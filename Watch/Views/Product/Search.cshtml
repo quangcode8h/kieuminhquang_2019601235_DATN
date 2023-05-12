@@ -109,19 +109,19 @@
                                     <div class="single-product-item">
                                         <div class="product-image">
                                             <a href="@url"><img src="~/Assets/Client/img/product/@item.Image" alt="product-image" /></a>
-                                            @if (item.Price != null)
+                                            @if (item.Promotion_Price != null)
                                             {
-                                                var discount = (1 - item.Price / item.Promotion_Price) * 100;
+                                                var discount = (1 - item.Promotion_Price / item.Price) * 100;
                                                 <a class="new-mark-box">-@Math.Round((double)discount, 0) %</a>
                                             }
                                         </div>
                                         <div class="product-info">
                                             <a href="@url">@item.Product_Name</a>
                                             <div class="price-box">
-                                                @if (item.Price != null)
+                                                @if (item.Promotion_Price != null)
                                                 {
-                                                    <span class="price">@item.Price.Value.ToString("N0") đ</span>
-                                                    <span class="old-price">@item.Promotion_Price.Value.ToString("N0") đ</span>
+                                                    <span class="price">@item.Promotion_Price.Value.ToString("N0") đ</span>
+                                                    <span class="old-price">@item.Price.Value.ToString("N0") đ</span>
                                                 }
                                                 else
                                                 {

@@ -101,7 +101,7 @@
                     type: 'POST',
                     success: function (res) {
                         if (res.status == true) {
-                            window.location.href = "/admin/user";
+                            setTimeout(function () { window.location.href = "/admin/user"; }, 2000);
                             PNotify.success({
                                 title: 'THÔNG BÁO!!',
                                 text: 'Cập nhật trạng thái thành công.'

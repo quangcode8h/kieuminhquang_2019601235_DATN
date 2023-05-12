@@ -178,7 +178,7 @@ namespace Watch.Areas.Admin.Controllers
             try
             {
                 var product = db.Products.Find(ID);
-                var orderDetail = db.Order_Detail.Where(o => o.Product_ID == ID);
+                var orderDetail = db.Order_Detail.Where(o => o.Product_ID == ID).FirstOrDefault();
                 if (orderDetail != null)
                 {
                     //product.Status = -1;

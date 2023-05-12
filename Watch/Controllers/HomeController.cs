@@ -20,7 +20,7 @@ namespace Watch.Controllers
             ViewBag.lstBrand = new ProductBusiness().getRandomBrand();
             ViewBag.NewProduct = db.Products.Where(x => x.Status == 1).OrderByDescending(x => x.ID).ToList();
             ViewBag.lstCategory = db.Categories.ToList();
-            ViewBag.lstFeatureProduct = new ProductBusiness().getRandomProduct();
+            ViewBag.lstFeatureProduct = db.Products.OrderByDescending(p => p.Price - p.Promotion_Price).ToList();
             return View();
         }
         public ActionResult lstProBy_Category(string Metatitle, long ID, string type = null, string order = null, int page = 1, int pagesize = 12)

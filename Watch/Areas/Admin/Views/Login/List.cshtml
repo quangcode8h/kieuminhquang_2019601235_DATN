@@ -5,9 +5,14 @@
     ViewBag.Title = "Quản lý truy cập";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
     var lstPhanQuyen = ViewBag.lstPhanQuyen as List<Role>;
+    int dem = 1;
 }
 @model List<Manager>
-
+<style>
+    .error{
+        color: red;
+    }
+</style>
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -23,12 +28,59 @@
     <!-- Main content -->
     <section class="content">
         <div class="row">
-            @if (TempData["message"] != null)
+            @if (TempData["error"] != null)
             {
-                <div class="alert @TempData["alert"] text-center" id="AlertBox">
-                    @TempData["message"]
+                <div class="alert @TempData["alert"] text-center" id="AlertBox" style="background-color: red; color: white;">
+                    @TempData["error"]
                 </div>
             }
+            @if (TempData["success"] != null)
+            {
+                <div class="alert @TempData["alert"] text-center" id="AlertBox" style="background-color: green; color: white;">
+                    @TempData["success"]
+                </div>
+            }
+        </div>
+        <div class="row">
+            <div class="col-md-4" style="margin-bottom: 10px">
+                <button class="btn btn-lg btn-primary" data-toggle="modal" data-target="#add">Thêm quản trị viên </button>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Thêm quản trị viên</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @using (Html.BeginForm("addAdmin", "Login", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmValidate" }))
+                        {
+                            <div class="form-group col-sm-12">
+                                <label for="recipient-name" class="col-form-label">Họ và tên:</label>
+                                <input type="text" name="Fullname" id="" class="form-control" >
+                            </div>
+                            <div class="form-group col-sm-12">
+                                <label for="recipient-name" class="col-form-label">Tài khoản:</label>
+                                <input type="text" name="Account" class="form-control" >
+                            </div>
+                            <div class="form-group col-sm-12">
+                                <label for="recipient-name" class="col-form-label">Mật khẩu:</label>
+                                <input type="password" name="Password" class="form-control" >
+                            </div>
+                            <div class="form-group text-center">
+                                <button type="submit" class="btn btn-primary btn-lg">Thêm mới</button>
+                            </div>
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="col-xs-12">
@@ -40,7 +92,7 @@
                         <table id="tblData" class="table table-bordered table-hover">
                             <thead>
                                 <tr>
-                                    <th class="text-center">ID</th>
+                                    <th class="text-center">STT</th>
                                     <th class="text-center" colspan="2">Thông tin</th>
                                     <th class="text-center">Tên truy cập</th>
                                     <th class="text-center">Quyền truy cập</th>
@@ -49,33 +101,35 @@
                             <tbody>
                                 @foreach (var item in Model)
                                 {
-                                <tr>
-                                    <td class="text-center">@item.ID</td>
-                                    <td><img src="~/Assets/Client/img/admin/@item.Image" width="100" /></td>
-                                    <td class="text-center">@item.Fullname</td>
-                                    <td class="text-center">@item.Account</td>
-                                    <td class="text-center">
-                                        @using (Html.BeginForm("UpdateRole", "Login", FormMethod.Post))
-                                        {
-                                            <div style="display: flex; justify-content: center;">
-                                                <select class="form-control" data-id="@item.ID" name="RoleID" style="width: 180px; margin-right: 20px;">
-                                                    @foreach (var jtem in lstPhanQuyen)
-                                                    {
-                                                        if (jtem.RoleID != 1 && jtem.RoleID != 5)
+                                    <tr>
+                                        <td class="text-center">@dem</td>
+                                        <td><img src="~/Assets/Client/img/admin/@item.Image" width="100" /></td>
+                                        <td class="text-center">@item.Fullname</td>
+                                        <td class="text-center">@item.Account</td>
+                                        <td class="text-center">
+                                            @using (Html.BeginForm("UpdateRole", "Login", FormMethod.Post))
+                                            {
+                                                <div style="display: flex; justify-content: center;">
+                                                    <select class="form-control" data-id="@item.ID" name="RoleID" style="width: 180px; margin-right: 20px;">
+                                                        @foreach (var jtem in lstPhanQuyen)
                                                         {
-                                                            <option value="@jtem.RoleID" @(jtem.RoleID == item.RoleID ? "selected" : "")>@jtem.Detail</option>
+                                                            if (jtem.RoleID != 1 && jtem.RoleID != 5)
+                                                            {
+                                                                <option value="@jtem.RoleID" @(jtem.RoleID == item.RoleID ? "selected" : "")>@jtem.Detail</option>
+                                                            }
                                                         }
-                                                    }
-                                                </select>
-                                                <input type="hidden" value="@item.ID" name="AdminID" />
-                                                <div class="form-group text-center">
-                                                    <button type="submit" class="btn btn-success">Phân quyền</button>
+                                                    </select>
+                                                    <input type="hidden" value="@item.ID" name="AdminID" />
+                                                    <div class="form-group text-center">
+                                                        <button type="submit" class="btn btn-success">Phân quyền</button>
+                                                        <a href="~/admin/login/deleteAdmin/@item.ID"  onclick="return confirm('Bạn có chắc chắn xóa quản trị viên này?')" style="margin-left: 10px;" class="btn btn-danger btnDelete" title="Xóa quản trị viên"><i class="fa fa-remove"></i></a>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        }
-                                    </td>
-                                  
-                                </tr>
+                                            }
+                                        </td>
+
+                                    </tr>
+                                    dem++;
                                 }
 
                             </tbody>
@@ -90,6 +144,32 @@
 </div>
 
 
+@section jsSection{
+    <script>
 
+        $(function () {
+            //nếu không có thao tác gì thì ẩn đi
+            $('#AlertBox').removeClass('hide');
 
+            //Sau khi hiển thị lên thì delay 1s và cuộn lên trên sử dụng slideup
+            $('#AlertBox').delay(2000).slideUp(500);
 
+            
+        });
+
+        //Khi bàn phím được nhấn và thả ra thì sẽ chạy phương thức này
+        $("#frmValidate").validate({
+            rules: {
+                Fullname: "required",
+                Account: "required",
+                Password: "required",
+            },
+            messages: {
+                Fullname: "Vui lòng nhập họ tên",
+                Account: "Vui lòng tài khoản",
+                Password: "Vui lòng nhập mật khẩu",
+            }
+        });
+
+    </script>
+}

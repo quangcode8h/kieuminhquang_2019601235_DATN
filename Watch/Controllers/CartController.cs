@@ -95,9 +95,7 @@ namespace Watch.Controllers
                 {
                     item.Quantity = quantity;
                 }
-
             }
-
             Session[CartSession] = productSec;
             return Json(new
             {
@@ -136,17 +134,17 @@ namespace Watch.Controllers
                     od.Product_ID = item.Product.ID;
                     od.Quantity = item.Quantity;
                     od.Order_ID = new OrderBusiness().findMaxID();
-                    if (item.Product.Price != null)
-                    {
-                        od.Price = item.Product.Price;
-                        od.Amount = (int)item.Product.Price * item.Quantity;
-                        TotalMoney += item.Product.Price * item.Quantity;
-                    }
-                    else
+                    if (item.Product.Promotion_Price != null)
                     {
                         od.Price = item.Product.Promotion_Price;
                         od.Amount = (int)item.Product.Promotion_Price * item.Quantity;
                         TotalMoney += item.Product.Promotion_Price * item.Quantity;
+                    }
+                    else
+                    {
+                        od.Price = item.Product.Price;
+                        od.Amount = (int)item.Product.Price * item.Quantity;
+                        TotalMoney += item.Product.Price * item.Quantity;
                     }
                     Quantity += item.Quantity;
                     new OrderBusiness().addOrder_Detail(od);

@@ -96,10 +96,10 @@
                                 <p>Thương hiệu: <span>@product.Brand.Name</span></p>
                             </div>
                             <div class="single-product-price">
-                                @if (product.Price != null)
+                                @if (product.Promotion_Price != product.Price)
                                 {
-                                    <h2 class="price">@product.Price.Value.ToString("N0") đ</h2>
-                                    <h4 class="old-price">@product.Promotion_Price.Value.ToString("N0") đ</h4>
+                                    <h2 class="price">@product.Promotion_Price.Value.ToString("N0") đ</h2>
+                                    <h4 class="old-price">@product.Price.Value.ToString("N0") đ</h4>
                                 }
                                 else
                                 {
@@ -201,7 +201,7 @@
                                                         </div>
                                                         <div class="tab-rating-box">
                                                             <div class="review-author-info text-right">
-                                                                <b style="color:red;">Admin</b>
+                                                                <b style="color:red;">B.Store</b>
                                                                 <span>@item.FeedbackDate.Value.ToString("dd-MM-yyyy hh:mm tt")</span>
                                                             </div>
                                                         </div>
@@ -229,7 +229,7 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="left-title-area">
-                            <h3 style="margin-bottom: 10px;">Một số sản phẩm cùng thương hiệu</h3>
+                            <h3 style="margin-bottom: 10px; font-weight: bold;">Một số sản phẩm cùng thương hiệu</h3>
                         </div>
                     </div>
                     <div class="related-product-area featured-products-area">
@@ -283,7 +283,7 @@
             <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                 <!-- SINGLE SIDE BAR START -->
                 <div class="single-product-right-sidebar">
-                    <h3>Một số sản phẩm cùng danh mục</span>
+                    <h3 style="font-weight: bold;">Một số sản phẩm cùng danh mục</h3>
                     <ul>
                         @foreach (var item in lstSameCategory)
                         {
@@ -291,7 +291,7 @@
                             <li>
                                 <a href="@url"><img src="~/Assets/Client/img/product/@item.Image" alt="" /></a>
                                 <div class="r-sidebar-pro-content">
-                                    <h5><a href="@url">@item.Product_Name</a></h5>
+                                    <h5><a href="@url">@item.Product_Name</a></h5>  
                                 </div>
                             </li>
                         }

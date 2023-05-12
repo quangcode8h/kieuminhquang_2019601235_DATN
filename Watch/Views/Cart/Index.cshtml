@@ -80,19 +80,19 @@
                                         </td>
                                         <td class="cart-unit">
                                             <ul class="price text-right">
-                                                @if (item.Product.Price == null)
+                                                @if (item.Product.Promotion_Price == item.Product.Price)
                                                 {
-                                                    <li class="price">@item.Product.Promotion_Price.Value.ToString("N0")</li>
-                                                    sum += (int)item.Product.Promotion_Price * item.Quantity;
+                                                    <li class="price special-price">@item.Product.Price.Value.ToString("N0")</li>
+                                                    sum += (int)item.Product.Price * item.Quantity;
                                                     totalmoney += sum;
                                                 }
                                                 else
                                                 {
-                                                    var discount = (1 - item.Product.Price / item.Product.Promotion_Price) * 100;
-                                                    <li class="price special-price">@item.Product.Price.Value.ToString("N0")</li>
+                                                    var discount = (1 - item.Product.Promotion_Price / item.Product.Price) * 100;
+                                                    <li class="price special-price">@item.Product.Promotion_Price.Value.ToString("N0")</li>
                                                     <li class="price-percent-reduction small">&nbsp;-@Math.Round((double)discount, 0)%&nbsp;</li>
-                                                    <li class="old-price">@item.Product.Promotion_Price.Value.ToString("N0")</li>
-                                                    sum += (int)item.Product.Price * item.Quantity;
+                                                    <li class="old-price">@item.Product.Price.Value.ToString("N0")</li>
+                                                    sum += (int)item.Product.Promotion_Price * item.Quantity;
                                                     totalmoney += sum;
                                                 }
                                             </ul>

@@ -28,7 +28,20 @@ namespace Watch.Areas.Admin.Controllers
             ViewBag.order = db.Orders.Find(ID);
             return View(query);
         }
-
+        [HttpPost]
+        [ValidateInput(false)]
+        public EmptyResult Export(string GridHtml)
+        {
+            Response.Clear();
+            Response.Buffer = true;
+            Response.AddHeader("content-disposition", "attachment;filename=HoaDon.doc");
+            Response.Charset = "";
+            Response.ContentType = "application/vnd.ms-word";
+            Response.Output.Write(GridHtml);
+            Response.Flush();
+            Response.End();
+            return new EmptyResult();
+        }
         //kích hoạt đã thanh toán
         public JsonResult changeStatus(long ID)
         {

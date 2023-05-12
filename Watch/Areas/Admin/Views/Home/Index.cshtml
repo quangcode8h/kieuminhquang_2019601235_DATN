@@ -1,5 +1,4 @@
 ﻿
-
 @using Watch.Models.DTO;
 @{
     ViewBag.Title = "Thống kê & báo cáo";
@@ -232,7 +231,6 @@
                 },
                 error: function (errormessage) {
                     alert("error");
-                    console.log(errormessage.responseText);
                 }
             });
 
@@ -253,7 +251,6 @@
                 Total.push(e.tong);
                 month.push("Tháng " + e.thang);
             })
-
             var chart = c3.generate({
                 bindto: '#SaleChart',
                 data: {

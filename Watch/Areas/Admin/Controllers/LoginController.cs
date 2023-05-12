@@ -90,20 +90,40 @@ namespace Watch.Areas.Admin.Controllers
             return RedirectToAction("List");
         }
 
+        public ActionResult addAdmin(Manager entity)
+        {
+            var ad = db.Managers.Where(a => a.Account == entity.Account).FirstOrDefault();
+            if(ad != null)
+            {
+                TempData["error"] = "Tài khoản đã tồn tại";
+            }
+            else
+            {
+                entity.Status = true;
+                entity.Password = handleMd5.EncryptString(entity.Password);
+                entity.RoleID = 6;
+                entity.Image = "default.png";
+                db.Managers.Add(entity);
+                db.SaveChanges();
+                TempData["success"] = "Tạo tài khoản thành công";
+            }
+            return RedirectToAction("List");
+        }
+
         //Xóa tài khoản
-        //public JsonResult Delete(long ID)
-        //{
-        //    var user = db.Managers.Find(ID);
-        //    //Xóa file cũ
-        //    if (user.Image != null)
-        //        System.IO.File.Delete(Path.Combine(Server.MapPath("~/Assets/Client/img/admin"), user.Image));
-        //    db.Managers.Remove(user);
-        //    db.SaveChanges();
-        //    return Json(new
-        //    {
-        //        status = true
-        //    });
-        //}
+        public ActionResult deleteAdmin(long ID)
+        {
+            var ad = db.Managers.Where(a => a.ID == ID).FirstOrDefault();
+            if(ad.RoleID == 6)
+            {
+                db.Managers.Remove(ad);
+                db.SaveChanges();
+                TempData["success"] = "Xóa tài khoản thành công";
+                return RedirectToAction("List");
+            }
+            TempData["error"] = "Xóa tài khoản KHÔNG thành công";
+            return RedirectToAction("List");
+        }
 
         [HttpPost]
         public ActionResult frmAdd(Watch.Models.EF.Manager entity, HttpPostedFileBase Image)
